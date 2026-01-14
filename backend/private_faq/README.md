@@ -106,6 +106,7 @@ User questions that will match:
 - Include contact information when appropriate
 - Use `\n` for line breaks in JSON strings
 - Maintain a professional, friendly tone
+- **Replace all placeholder values** (e.g., `[CEO Name]`, `...`, `[Phone Number]`) with actual information before deployment
 - Update contact numbers and email addresses regularly
 
 ## Security Notes

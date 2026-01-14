@@ -147,7 +147,7 @@ FAQs are stored in `backend/private_faq/faqs.json`:
 {
   "fees": {
     "keywords": ["fees", "fee", "cost", "price", "pricing"],
-    "answer": "The fees is dependent on a variety of factors..."
+    "answer": "The fees are dependent on a variety of factors..."
   },
   "contact": {
     "keywords": ["contact", "reach", "call", "email"],
