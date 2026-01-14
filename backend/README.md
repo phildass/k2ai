@@ -54,8 +54,9 @@ The backend will be available at:
 
 ### Chat Endpoints
 
-**POST /api/chat** (Main endpoint)
+**POST /api/chat/** (Main endpoint)
 - Send a message to the AI chatbot
+- Note: Both `/api/chat` and `/api/chat/` work (the former redirects to the latter)
 - Request body:
   ```json
   {
@@ -76,7 +77,7 @@ The backend will be available at:
   ```
 
 **POST /api/chat/message** (Alternative endpoint for backward compatibility)
-- Same functionality as POST /api/chat
+- Same functionality as POST /api/chat/
 
 **GET /api/chat/conversation/{conversation_id}**
 - Retrieve conversation history
@@ -169,7 +170,7 @@ You can test the API using:
 1. **Interactive Docs**: Visit http://localhost:8000/docs
 2. **curl**:
    ```bash
-   curl -X POST http://localhost:8000/api/chat \
+   curl -X POST http://localhost:8000/api/chat/ \
      -H "Content-Type: application/json" \
      -d '{"message": "Tell me about your PR services"}'
    ```
@@ -178,7 +179,7 @@ You can test the API using:
    import requests
    
    response = requests.post(
-       "http://localhost:8000/api/chat",
+       "http://localhost:8000/api/chat/",
        json={"message": "Tell me about your PR services"}
    )
    print(response.json())
