@@ -35,7 +35,7 @@ export default function Home() {
           <div className="flex justify-between items-center">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">K2 Communications</h1>
-              <p className="text-sm text-gray-600">India's Premier PR Agency</p>
+              <p className="text-sm text-gray-600">India&apos;s Premier PR Agency</p>
             </div>
             <button
               onClick={() => setShowLeadForm(true)}

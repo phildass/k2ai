@@ -4,7 +4,12 @@ from services.chatbot_service import ChatbotService
 import uuid
 
 router = APIRouter()
-chatbot_service = ChatbotService()
+
+def get_chatbot_service():
+    """Get or create chatbot service instance."""
+    if not hasattr(get_chatbot_service, '_instance'):
+        get_chatbot_service._instance = ChatbotService()
+    return get_chatbot_service._instance
 
 @router.post("/message", response_model=ChatResponse)
 async def send_message(request: ChatRequest):
@@ -15,6 +20,9 @@ async def send_message(request: ChatRequest):
     try:
         # Generate conversation ID if not provided
         conversation_id = request.conversation_id or str(uuid.uuid4())
+        
+        # Get chatbot service
+        chatbot_service = get_chatbot_service()
         
         # Get chatbot response
         response = await chatbot_service.process_message(
@@ -39,6 +47,7 @@ async def get_conversation_history(conversation_id: str):
     Retrieve conversation history for a given conversation ID.
     """
     try:
+        chatbot_service = get_chatbot_service()
         history = await chatbot_service.get_conversation_history(conversation_id)
         return {"conversation_id": conversation_id, "messages": history}
     except Exception as e:

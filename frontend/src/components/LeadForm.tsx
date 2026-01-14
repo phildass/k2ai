@@ -70,7 +70,7 @@ export default function LeadForm({ onClose }: LeadFormProps) {
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-gray-900 mb-2">Thank You!</h3>
-            <p className="text-gray-600">We'll get in touch with you soon.</p>
+            <p className="text-gray-600">We&apos;ll get in touch with you soon.</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
