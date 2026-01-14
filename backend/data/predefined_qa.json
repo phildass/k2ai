@@ -1,0 +1,54 @@
+{
+  "questions": [
+    {
+      "question": "Who is your CEO?",
+      "answer": "K2 Communications is led by our experienced leadership team. For specific information about our CEO and leadership, please visit our website at https://www.k2communications.in/ or contact us directly.",
+      "keywords": ["ceo", "chief executive", "leader", "leadership", "who leads", "founder"]
+    },
+    {
+      "question": "What services do you offer?",
+      "answer": "K2 Communications offers comprehensive PR and communications services:\n\n1. **PR Consultancy** - Strategic public relations and media relations\n2. **Reputation & Crisis Management** - 24/7 crisis response and reputation monitoring\n3. **Digital & Social Media Marketing** - Comprehensive digital strategies\n4. **Content Development** - High-quality content creation\n5. **Market Research** - In-depth market analysis and insights\n6. **Translation Services** - Multilingual campaign support across India\n\nWould you like to know more about any specific service?",
+      "keywords": ["services", "what do you offer", "what do you do", "offerings", "solutions", "capabilities"]
+    },
+    {
+      "question": "How can I contact K2 Communications?",
+      "answer": "You can contact K2 Communications through:\n\n- **Website**: https://www.k2communications.in/\n- **Email**: You can find contact details on our website\n- **Chat**: Continue this conversation and our team will assist you\n\nWould you like me to help you schedule a consultation or connect you with our team?",
+      "keywords": ["contact", "reach", "get in touch", "email", "phone", "call", "address", "location"]
+    },
+    {
+      "question": "What are your office hours?",
+      "answer": "K2 Communications offers flexible support to meet client needs. For specific office hours and availability, please visit our website at https://www.k2communications.in/ or contact us directly. We also provide 24/7 crisis management support for our clients.",
+      "keywords": ["office hours", "working hours", "hours", "timings", "schedule", "availability", "open"]
+    },
+    {
+      "question": "Do you provide crisis management?",
+      "answer": "Yes! Crisis management is one of our core services. K2 Communications provides:\n\n- **24/7 Crisis Response** - Round-the-clock monitoring and rapid response\n- **Reputation Management** - Proactive and reactive reputation handling\n- **Crisis Communication** - Strategic messaging during critical situations\n- **Media Training** - Prepare your team for challenging scenarios\n\nOur experienced team helps clients navigate PR crises with professionalism and strategic expertise. Would you like to discuss a specific crisis management need?",
+      "keywords": ["crisis", "emergency", "reputation", "damage control", "pr crisis", "emergency response"]
+    },
+    {
+      "question": "What industries do you serve?",
+      "answer": "K2 Communications serves major brands across multiple sectors in India, including:\n\n- Technology and IT\n- Healthcare and Pharmaceuticals\n- Financial Services\n- Consumer Goods\n- Real Estate\n- Education\n- Manufacturing\n- And many more\n\nWe have expertise in adapting our PR strategies to the unique needs of each industry. What industry are you in?",
+      "keywords": ["industries", "sectors", "verticals", "clients", "who do you work with", "specialization"]
+    },
+    {
+      "question": "Do you offer multilingual services?",
+      "answer": "Absolutely! K2 Communications provides multilingual support across India:\n\n- **Translation Services** - Professional translation for campaigns\n- **Regional Language Support** - Coverage in Hindi, Tamil, Telugu, Malayalam, Kannada, and more\n- **Cultural Adaptation** - Culturally relevant messaging for different regions\n- **Nationwide Coverage** - Pan-India reach with local expertise\n\nOur multilingual capabilities ensure your message reaches diverse audiences effectively. Which languages are you interested in?",
+      "keywords": ["multilingual", "languages", "translation", "hindi", "regional", "vernacular", "local language"]
+    },
+    {
+      "question": "What is your pricing?",
+      "answer": "Our pricing is customized based on your specific needs, scope of work, and campaign requirements. Every client has unique PR and communications needs, so we create tailored packages.\n\nTo get a detailed quote:\n1. Share your specific requirements with me\n2. Schedule a consultation with our team\n3. We'll create a customized proposal for you\n\nWould you like to tell me more about your PR needs so I can help arrange a consultation?",
+      "keywords": ["pricing", "cost", "price", "fee", "rates", "how much", "charges", "budget"]
+    },
+    {
+      "question": "How do I get started?",
+      "answer": "Getting started with K2 Communications is easy:\n\n1. **Tell us about your needs** - Share your PR and communications goals\n2. **Schedule a consultation** - Meet with our team to discuss strategy\n3. **Receive a proposal** - Get a customized plan and pricing\n4. **Launch your campaign** - Start working with our expert team\n\nI can help you get started right now! What are your main PR or communications goals?",
+      "keywords": ["get started", "begin", "start", "onboarding", "first step", "how to start"]
+    },
+    {
+      "question": "What makes K2 Communications different?",
+      "answer": "K2 Communications stands out because of:\n\n✅ **Ethical Practices** - Transparency and integrity in all operations\n✅ **Technology Innovation** - Embracing AI and modern tools\n✅ **Multilingual Expertise** - Nationwide coverage across India\n✅ **Experienced Team** - Working with major Indian brands\n✅ **Comprehensive Services** - Full-spectrum PR and communications\n✅ **24/7 Crisis Support** - Always available when you need us\n\nWe combine traditional PR excellence with modern technology to deliver exceptional results. What matters most to you in a PR partner?",
+      "keywords": ["different", "unique", "special", "why choose", "advantages", "benefits", "standout"]
+    }
+  ]
+}

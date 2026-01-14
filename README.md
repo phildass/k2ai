@@ -21,46 +21,53 @@ K2 Communications (https://www.k2communications.in/) is a leading PR agency in I
 
 ## 🚀 Features
 
-### 1. Service Discovery & Lead Capture
-- Conversational explanations of K2's core services
-- Interactive client intake forms
-- Instant inquiry capture and routing
-- Service recommendations based on client needs
+### 1. Hybrid Q&A System (NEW!)
+- **Predefined Q&A**: Fast, consistent answers for common questions
+- **LLM Fallback**: AI-powered responses for complex or unique queries
+- **Smart Matching**: Keyword-based fuzzy matching with confidence scores
+- **Easy Maintenance**: Update Q&A via JSON file without code changes
+- See `backend/QA_IMPLEMENTATION.md` for details
 
-### 2. PR Operations & Crisis Support
-- FAQs for crisis management scenarios
-- Reputation repair guidance
-- 24/7 crisis communication support
+### 2. Service Discovery & Lead Capture
+- **Conversational explanations of K2's core services**
+- **Interactive client intake forms**
+- **Instant inquiry capture and routing**
+- **Service recommendations based on client needs**
 
-### 3. Content & Media Workflow
-- AI-assisted press release briefing
-- Content writing tips and guidance
-- Blog and article preparation support
+### 3. PR Operations & Crisis Support
+- **FAQs for crisis management scenarios**
+- **Reputation repair guidance**
+- **24/7 crisis communication support**
 
-### 4. Multilingual Conversations
-- Support for English and Indian regional languages
-- Seamless language switching
-- Cultural adaptation in responses
+### 4. Content & Media Workflow
+- **AI-assisted press release briefing**
+- **Content writing tips and guidance**
+- **Blog and article preparation support**
 
-### 5. Client Campaign Dashboard (Planned)
-- Campaign progress tracking
-- Coverage reports
-- News updates
+### 5. Multilingual Conversations
+- **Support for English and Indian regional languages**
+- **Seamless language switching**
+- **Cultural adaptation in responses**
 
-### 6. Event & Interaction Scheduling (Planned)
-- Interview booking
-- Press event scheduling
-- Automated reminders
+### 6. Client Campaign Dashboard (Planned)
+- **Campaign progress tracking**
+- **Coverage reports**
+- **News updates**
 
-### 7. Feedback Collection
-- Automated feedback gathering
-- AI sentiment analysis
-- Service improvement insights
+### 7. Event & Interaction Scheduling (Planned)
+- **Interview booking**
+- **Press event scheduling**
+- **Automated reminders**
 
-### 8. Social Media Integration (Planned)
-- Campaign posting assistance
-- Digital PR support
-- Social media advisory
+### 8. Feedback Collection
+- **Automated feedback gathering**
+- **AI sentiment analysis**
+- **Service improvement insights**
+
+### 9. Social Media Integration (Planned)
+- **Campaign posting assistance**
+- **Digital PR support**
+- **Social media advisory**
 
 ## 🏗️ Architecture
 
@@ -209,10 +216,43 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 ### Chat Endpoints
 
-**POST /api/chat/message**
+**POST /api/chat/** or **POST /api/chat/message**
 - Send a message to the AI chatbot
+- Supports predefined Q&A with LLM fallback
 - Supports multilingual conversations
-- Returns AI response with suggestions
+- Returns AI response with suggestions and metadata
+- Response includes `source` field: "predefined" or "llm"
+
+**Example Request:**
+```bash
+curl -X POST "http://localhost:8000/api/chat/" \
+  -H "Content-Type: application/json" \
+  -d '{"message": "What services do you offer?", "conversation_id": "test-123"}'
+```
+
+**Example Response:**
+```json
+{
+  "message": "K2 Communications offers comprehensive PR and communications services...",
+  "conversation_id": "test-123",
+  "suggestions": ["Tell me more about PR consultancy", "What is crisis management?"],
+  "metadata": {
+    "source": "predefined",
+    "matched_question": "What services do you offer?",
+    "confidence": 1.0,
+    "language": "en",
+    "timestamp": "2026-01-14T08:00:00.000000"
+  }
+}
+```
+
+**Run the example script:**
+```bash
+cd backend
+python example_api_usage.py
+```
+
+See `backend/QA_IMPLEMENTATION.md` for detailed information about the Q&A system.
 
 **GET /api/chat/conversation/{conversation_id}**
 - Retrieve conversation history
