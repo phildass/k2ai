@@ -15,7 +15,9 @@ app = FastAPI(
 )
 
 # CORS configuration
-origins = os.getenv("CORS_ORIGINS", "http://localhost:3000").split(",")
+# Default to common development origins if not specified in environment
+default_origins = "http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:8080"
+origins = os.getenv("CORS_ORIGINS", default_origins).split(",")
 
 app.add_middleware(
     CORSMiddleware,
