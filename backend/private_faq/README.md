@@ -29,9 +29,11 @@ Each entry in `faqs.json` follows this structure:
 
 1. User sends a message to `/api/chat/`
 2. The system converts the message to lowercase
-3. It checks if ANY keyword from ANY FAQ entry appears in the message
+3. It checks if ANY keyword from ANY FAQ entry appears as a complete word in the message (using word boundary matching)
 4. If a match is found, the predetermined answer is returned immediately
 5. If no match, the system falls back to the OpenAI/LLM for a dynamic response
+
+**Note:** The system uses word boundary matching, so "fee" will match "What is the fee?" but won't match "coffee" or "feedback".
 
 ## Examples
 
@@ -39,7 +41,7 @@ Each entry in `faqs.json` follows this structure:
 ```json
 "fees": {
   "keywords": ["fees", "fee", "cost", "price", "pricing", "charges"],
-  "answer": "The fees is dependent on a variety of factors. To get a concise answer, connect with our offices. Call ... in Bangalore, ... in Mumbai, ... in Delhi NCR. Or write to us at enquiry@k2communications.in"
+  "answer": "The fees are dependent on a variety of factors. To get a concise answer, connect with our offices. Call ... in Bangalore, ... in Mumbai, ... in Delhi NCR. Or write to us at enquiry@k2communications.in"
 }
 ```
 
@@ -75,7 +77,7 @@ User questions that will match:
 ```
 
 3. Save the file
-4. The changes will be loaded automatically (hot reload supported)
+4. Restart the server to load the changes
 
 ### Editing an Existing FAQ
 

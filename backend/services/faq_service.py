@@ -1,8 +1,8 @@
 import json
-import os
 from typing import Optional, Dict, List
 from pathlib import Path
 import logging
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +61,7 @@ class FAQService:
     def find_matching_faq(self, user_message: str) -> Optional[Dict[str, str]]:
         """
         Search for a matching FAQ based on user message.
-        Performs case-insensitive keyword matching.
+        Performs case-insensitive keyword matching with word boundaries.
         
         Args:
             user_message: The user's question/message
@@ -81,7 +81,10 @@ class FAQService:
             
             # Check if any keyword matches in the user message
             for keyword in keywords:
-                if keyword.lower() in normalized_message:
+                # Use word boundary regex for more precise matching
+                # \b ensures we match whole words, not substrings
+                pattern = r'\b' + re.escape(keyword.lower()) + r'\b'
+                if re.search(pattern, normalized_message):
                     return {
                         "topic": topic,
                         "answer": faq_data.get("answer", "")
