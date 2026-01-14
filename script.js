@@ -1,5 +1,6 @@
 // API Configuration
 const API_URL = 'http://localhost:8000/api/chat/';
+const ERROR_DISPLAY_DURATION = 5000; // milliseconds
 
 // State management
 let conversationId = null;
@@ -167,10 +168,10 @@ function showError(message) {
     chatMessages.appendChild(errorDiv);
     scrollToBottom();
     
-    // Auto-remove after 5 seconds
+    // Auto-remove after configured duration
     setTimeout(() => {
         errorDiv.remove();
-    }, 5000);
+    }, ERROR_DISPLAY_DURATION);
 }
 
 // Set loading state
