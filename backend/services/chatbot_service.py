@@ -101,12 +101,6 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
         if faq_match:
             # FAQ match found - return predetermined answer
             answer = faq_match["answer"]
-        # First, try to find a predefined answer
-        predefined_match = self.qa_service.find_answer(message)
-        
-        if predefined_match:
-            # Found a predefined answer - use it
-            assistant_message = predefined_match['answer']
             
             # Add assistant response to history
             self.conversations[conversation_id].append({
@@ -126,7 +120,16 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                 "answer_source": "faq_match"
             }
         
-        # STEP 2: No FAQ match - proceed with LLM
+        # STEP 2: Try predefined Q&A
+        predefined_match = self.qa_service.find_answer(message)
+        
+        if predefined_match:
+            # Found a predefined answer - use it
+            assistant_message = predefined_match['answer']
+            
+            # Add assistant response to history
+            self.conversations[conversation_id].append({
+                "role": "assistant",
                 "content": assistant_message,
                 "timestamp": datetime.now().isoformat()
             })
@@ -143,10 +146,11 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                     "confidence": predefined_match['confidence'],
                     "language": language,
                     "timestamp": datetime.now().isoformat()
-                }
+                },
+                "answer_source": "ai"
             }
         
-        # No predefined answer found - use LLM
+        # STEP 3: No predefined answer found - use LLM
         # Check if API key is missing
         if self.api_key_missing:
             missing_key_message = (
@@ -159,12 +163,11 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             return {
                 "message": missing_key_message,
                 "suggestions": ["Visit K2 Communications website", "Contact support"],
-                "metadata": {"error": "OPENAI_API_KEY not configured"},
-                "answer_source": "ai"
                 "metadata": {
                     "source": "error",
                     "error": "OPENAI_API_KEY not configured"
-                }
+                },
+                "answer_source": "ai"
             }
         
         # Prepare messages for OpenAI
@@ -217,12 +220,11 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             return {
                 "message": f"I apologize, but I'm experiencing technical difficulties. Please try again or contact us directly at K2 Communications. Error: {str(e)}",
                 "suggestions": ["Try again", "Contact us", "View services"],
-                "metadata": {"error": str(e)},
-                "answer_source": "ai"
                 "metadata": {
                     "source": "error",
                     "error": str(e)
-                }
+                },
+                "answer_source": "ai"
             }
     
     def _generate_suggestions(self, user_message: str, assistant_response: str) -> List[str]:
