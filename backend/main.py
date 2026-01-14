@@ -19,6 +19,10 @@ app = FastAPI(
 default_origins = "http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:8080"
 origins = os.getenv("CORS_ORIGINS", default_origins).split(",")
 
+# For development, you can use ["*"] as origins to allow all. It's less secure!
+if not origins or origins == [""]:
+    origins = ["*"]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
