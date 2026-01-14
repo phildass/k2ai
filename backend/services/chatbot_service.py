@@ -3,6 +3,7 @@ from openai import AsyncOpenAI
 from typing import Optional, Dict, List
 from datetime import datetime
 from .faq_service import FAQService
+from services.qa_service import QAService
 
 # Constants
 PLACEHOLDER_API_KEY = "your_openai_api_key_here"
@@ -21,6 +22,9 @@ class ChatbotService:
         self.model = os.getenv("LLM_MODEL", "gpt-4-turbo-preview")
         self.temperature = float(os.getenv("LLM_TEMPERATURE", "0.7"))
         self.max_tokens = int(os.getenv("LLM_MAX_TOKENS", "1000"))
+        
+        # Initialize QA Service for predefined answers
+        self.qa_service = QAService()
         
         # In-memory conversation storage (replace with database in production)
         self.conversations: Dict[str, List[Dict]] = {}
@@ -78,6 +82,7 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
         """
         Process a user message and generate a response.
         First checks for FAQ matches, then falls back to LLM if no match.
+        First checks predefined Q&A, then falls back to LLM if no match.
         """
         # Initialize conversation history if needed
         if conversation_id not in self.conversations:
@@ -96,6 +101,12 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
         if faq_match:
             # FAQ match found - return predetermined answer
             answer = faq_match["answer"]
+        # First, try to find a predefined answer
+        predefined_match = self.qa_service.find_answer(message)
+        
+        if predefined_match:
+            # Found a predefined answer - use it
+            assistant_message = predefined_match['answer']
             
             # Add assistant response to history
             self.conversations[conversation_id].append({
@@ -116,6 +127,26 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             }
         
         # STEP 2: No FAQ match - proceed with LLM
+                "content": assistant_message,
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # Generate suggestions based on the predefined answer
+            suggestions = self._generate_suggestions(message, assistant_message)
+            
+            return {
+                "message": assistant_message,
+                "suggestions": suggestions,
+                "metadata": {
+                    "source": "predefined",
+                    "matched_question": predefined_match['question'],
+                    "confidence": predefined_match['confidence'],
+                    "language": language,
+                    "timestamp": datetime.now().isoformat()
+                }
+            }
+        
+        # No predefined answer found - use LLM
         # Check if API key is missing
         if self.api_key_missing:
             missing_key_message = (
@@ -130,6 +161,10 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                 "suggestions": ["Visit K2 Communications website", "Contact support"],
                 "metadata": {"error": "OPENAI_API_KEY not configured"},
                 "answer_source": "ai"
+                "metadata": {
+                    "source": "error",
+                    "error": "OPENAI_API_KEY not configured"
+                }
             }
         
         # Prepare messages for OpenAI
@@ -169,6 +204,7 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                 "message": assistant_message,
                 "suggestions": suggestions,
                 "metadata": {
+                    "source": "llm",
                     "language": language,
                     "model": self.model,
                     "timestamp": datetime.now().isoformat()
@@ -183,6 +219,10 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                 "suggestions": ["Try again", "Contact us", "View services"],
                 "metadata": {"error": str(e)},
                 "answer_source": "ai"
+                "metadata": {
+                    "source": "error",
+                    "error": str(e)
+                }
             }
     
     def _generate_suggestions(self, user_message: str, assistant_response: str) -> List[str]:
