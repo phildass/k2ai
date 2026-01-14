@@ -41,7 +41,8 @@ async def send_message(request: ChatRequest):
             message=response["message"],
             conversation_id=conversation_id,
             suggestions=response.get("suggestions"),
-            metadata=response.get("metadata")
+            metadata=response.get("metadata"),
+            answer_source=response.get("answer_source", "ai")
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

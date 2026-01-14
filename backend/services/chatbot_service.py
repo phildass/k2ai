@@ -2,6 +2,7 @@ import os
 from openai import AsyncOpenAI
 from typing import Optional, Dict, List
 from datetime import datetime
+from .faq_service import FAQService
 from services.qa_service import QAService
 
 # Constants
@@ -27,6 +28,9 @@ class ChatbotService:
         
         # In-memory conversation storage (replace with database in production)
         self.conversations: Dict[str, List[Dict]] = {}
+        
+        # Initialize FAQ service
+        self.faq_service = FAQService()
         
     def get_system_prompt(self, language: str = "en") -> str:
         """
@@ -77,6 +81,7 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
     ) -> Dict:
         """
         Process a user message and generate a response.
+        First checks for FAQ matches, then falls back to LLM if no match.
         First checks predefined Q&A, then falls back to LLM if no match.
         """
         # Initialize conversation history if needed
@@ -90,6 +95,12 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             "timestamp": datetime.now().isoformat()
         })
         
+        # STEP 1: Check for FAQ match first
+        faq_match = self.faq_service.find_matching_faq(message)
+        
+        if faq_match:
+            # FAQ match found - return predetermined answer
+            answer = faq_match["answer"]
         # First, try to find a predefined answer
         predefined_match = self.qa_service.find_answer(message)
         
@@ -100,6 +111,22 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             # Add assistant response to history
             self.conversations[conversation_id].append({
                 "role": "assistant",
+                "content": answer,
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            return {
+                "message": answer,
+                "suggestions": self._generate_suggestions(message, answer),
+                "metadata": {
+                    "language": language,
+                    "faq_topic": faq_match["topic"],
+                    "timestamp": datetime.now().isoformat()
+                },
+                "answer_source": "faq_match"
+            }
+        
+        # STEP 2: No FAQ match - proceed with LLM
                 "content": assistant_message,
                 "timestamp": datetime.now().isoformat()
             })
@@ -132,6 +159,8 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             return {
                 "message": missing_key_message,
                 "suggestions": ["Visit K2 Communications website", "Contact support"],
+                "metadata": {"error": "OPENAI_API_KEY not configured"},
+                "answer_source": "ai"
                 "metadata": {
                     "source": "error",
                     "error": "OPENAI_API_KEY not configured"
@@ -179,7 +208,8 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                     "language": language,
                     "model": self.model,
                     "timestamp": datetime.now().isoformat()
-                }
+                },
+                "answer_source": "ai"
             }
         
         except Exception as e:
@@ -187,6 +217,8 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             return {
                 "message": f"I apologize, but I'm experiencing technical difficulties. Please try again or contact us directly at K2 Communications. Error: {str(e)}",
                 "suggestions": ["Try again", "Contact us", "View services"],
+                "metadata": {"error": str(e)},
+                "answer_source": "ai"
                 "metadata": {
                     "source": "error",
                     "error": str(e)

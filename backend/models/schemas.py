@@ -18,6 +18,7 @@ class ChatResponse(BaseModel):
     conversation_id: str
     suggestions: Optional[List[str]] = None
     metadata: Optional[dict] = None
+    answer_source: Optional[str] = Field(default="ai", description="Source of answer: 'faq_match' or 'ai'")
 
 class LeadCaptureRequest(BaseModel):
     name: str
