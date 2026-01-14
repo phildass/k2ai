@@ -1,0 +1,151 @@
+import os
+from openai import AsyncOpenAI
+from typing import Optional, Dict, List
+from datetime import datetime
+
+class ChatbotService:
+    def __init__(self):
+        self.client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        self.model = os.getenv("LLM_MODEL", "gpt-4-turbo-preview")
+        self.temperature = float(os.getenv("LLM_TEMPERATURE", "0.7"))
+        self.max_tokens = int(os.getenv("LLM_MAX_TOKENS", "1000"))
+        
+        # In-memory conversation storage (replace with database in production)
+        self.conversations: Dict[str, List[Dict]] = {}
+        
+    def get_system_prompt(self, language: str = "en") -> str:
+        """
+        Get the system prompt for the chatbot based on language.
+        """
+        base_prompt = """You are an AI assistant for K2 Communications, India's premier public relations and communications agency.
+
+K2 Communications offers:
+1. PR Consultancy - Strategic public relations and media relations
+2. Reputation & Crisis Management - Proactive and reactive crisis handling
+3. Digital & Social Media Marketing - Comprehensive digital strategies
+4. Content Development - High-quality content creation
+5. Market Research - In-depth market analysis
+6. Translation Services - Multilingual campaign support
+
+Key Values:
+- Ethical practices and transparency
+- Embracing new technologies including AI
+- Multilingual, nationwide coverage across India
+- Working with major Indian brands across multiple sectors
+
+Your role:
+- Explain services clearly and conversationally
+- Help potential clients understand PR concepts
+- Capture leads and answer inquiries
+- Provide crisis management guidance
+- Assist with content and media workflow questions
+- Be professional yet approachable
+- Recommend appropriate services based on client needs
+
+Always be helpful, professional, and represent K2 Communications' excellence in PR and communications."""
+
+        if language == "hi":  # Hindi
+            return base_prompt + "\n\nPlease respond in Hindi when appropriate."
+        elif language in ["ta", "te", "ml", "kn"]:  # South Indian languages
+            return base_prompt + f"\n\nPlease respond in the requested language ({language}) when appropriate."
+        
+        return base_prompt
+    
+    async def process_message(
+        self,
+        message: str,
+        conversation_id: str,
+        language: str = "en",
+        context: Optional[Dict] = None
+    ) -> Dict:
+        """
+        Process a user message and generate a response.
+        """
+        # Initialize conversation history if needed
+        if conversation_id not in self.conversations:
+            self.conversations[conversation_id] = []
+        
+        # Add user message to history
+        self.conversations[conversation_id].append({
+            "role": "user",
+            "content": message,
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        # Prepare messages for OpenAI
+        messages = [
+            {"role": "system", "content": self.get_system_prompt(language)}
+        ]
+        
+        # Add conversation history
+        for msg in self.conversations[conversation_id]:
+            messages.append({
+                "role": msg["role"],
+                "content": msg["content"]
+            })
+        
+        try:
+            # Call OpenAI API
+            response = await self.client.chat.completions.create(
+                model=self.model,
+                messages=messages,
+                temperature=self.temperature,
+                max_tokens=self.max_tokens
+            )
+            
+            assistant_message = response.choices[0].message.content
+            
+            # Add assistant response to history
+            self.conversations[conversation_id].append({
+                "role": "assistant",
+                "content": assistant_message,
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # Generate suggestions based on context
+            suggestions = self._generate_suggestions(message, assistant_message)
+            
+            return {
+                "message": assistant_message,
+                "suggestions": suggestions,
+                "metadata": {
+                    "language": language,
+                    "model": self.model,
+                    "timestamp": datetime.now().isoformat()
+                }
+            }
+        
+        except Exception as e:
+            # Fallback response
+            return {
+                "message": f"I apologize, but I'm experiencing technical difficulties. Please try again or contact us directly at K2 Communications. Error: {str(e)}",
+                "suggestions": ["Try again", "Contact us", "View services"],
+                "metadata": {"error": str(e)}
+            }
+    
+    def _generate_suggestions(self, user_message: str, assistant_response: str) -> List[str]:
+        """
+        Generate follow-up suggestions based on the conversation.
+        """
+        suggestions = []
+        
+        # Default suggestions based on common topics
+        if "service" in user_message.lower() or "service" in assistant_response.lower():
+            suggestions.extend(["Tell me more about PR consultancy", "What is crisis management?"])
+        
+        if "price" in user_message.lower() or "cost" in user_message.lower():
+            suggestions.append("Schedule a consultation")
+        
+        if "crisis" in user_message.lower():
+            suggestions.extend(["How to handle a PR crisis?", "24/7 support options"])
+        
+        # Always include these options
+        suggestions.extend(["View all services", "Speak to a consultant"])
+        
+        return suggestions[:4]  # Return top 4 suggestions
+    
+    async def get_conversation_history(self, conversation_id: str) -> List[Dict]:
+        """
+        Retrieve conversation history for a given conversation ID.
+        """
+        return self.conversations.get(conversation_id, [])
