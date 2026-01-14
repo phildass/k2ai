@@ -2,6 +2,7 @@ import os
 from openai import AsyncOpenAI
 from typing import Optional, Dict, List
 from datetime import datetime
+from .faq_service import FAQService
 
 # Constants
 PLACEHOLDER_API_KEY = "your_openai_api_key_here"
@@ -23,6 +24,9 @@ class ChatbotService:
         
         # In-memory conversation storage (replace with database in production)
         self.conversations: Dict[str, List[Dict]] = {}
+        
+        # Initialize FAQ service
+        self.faq_service = FAQService()
         
     def get_system_prompt(self, language: str = "en") -> str:
         """
@@ -73,7 +77,45 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
     ) -> Dict:
         """
         Process a user message and generate a response.
+        First checks for FAQ matches, then falls back to LLM if no match.
         """
+        # Initialize conversation history if needed
+        if conversation_id not in self.conversations:
+            self.conversations[conversation_id] = []
+        
+        # Add user message to history
+        self.conversations[conversation_id].append({
+            "role": "user",
+            "content": message,
+            "timestamp": datetime.now().isoformat()
+        })
+        
+        # STEP 1: Check for FAQ match first
+        faq_match = self.faq_service.find_matching_faq(message)
+        
+        if faq_match:
+            # FAQ match found - return predetermined answer
+            answer = faq_match["answer"]
+            
+            # Add assistant response to history
+            self.conversations[conversation_id].append({
+                "role": "assistant",
+                "content": answer,
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            return {
+                "message": answer,
+                "suggestions": self._generate_suggestions(message, answer),
+                "metadata": {
+                    "language": language,
+                    "faq_topic": faq_match["topic"],
+                    "timestamp": datetime.now().isoformat()
+                },
+                "answer_source": "faq_match"
+            }
+        
+        # STEP 2: No FAQ match - proceed with LLM
         # Check if API key is missing
         if self.api_key_missing:
             missing_key_message = (
@@ -86,19 +128,9 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             return {
                 "message": missing_key_message,
                 "suggestions": ["Visit K2 Communications website", "Contact support"],
-                "metadata": {"error": "OPENAI_API_KEY not configured"}
+                "metadata": {"error": "OPENAI_API_KEY not configured"},
+                "answer_source": "ai"
             }
-        
-        # Initialize conversation history if needed
-        if conversation_id not in self.conversations:
-            self.conversations[conversation_id] = []
-        
-        # Add user message to history
-        self.conversations[conversation_id].append({
-            "role": "user",
-            "content": message,
-            "timestamp": datetime.now().isoformat()
-        })
         
         # Prepare messages for OpenAI
         messages = [
@@ -140,7 +172,8 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                     "language": language,
                     "model": self.model,
                     "timestamp": datetime.now().isoformat()
-                }
+                },
+                "answer_source": "ai"
             }
         
         except Exception as e:
@@ -148,7 +181,8 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             return {
                 "message": f"I apologize, but I'm experiencing technical difficulties. Please try again or contact us directly at K2 Communications. Error: {str(e)}",
                 "suggestions": ["Try again", "Contact us", "View services"],
-                "metadata": {"error": str(e)}
+                "metadata": {"error": str(e)},
+                "answer_source": "ai"
             }
     
     def _generate_suggestions(self, user_message: str, assistant_response: str) -> List[str]:
