@@ -3,9 +3,20 @@ from openai import AsyncOpenAI
 from typing import Optional, Dict, List
 from datetime import datetime
 
+# Constants
+PLACEHOLDER_API_KEY = "your_openai_api_key_here"
+
 class ChatbotService:
     def __init__(self):
-        self.client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+        # Check if API key is present
+        self.api_key = os.getenv("OPENAI_API_KEY")
+        if not self.api_key or self.api_key == PLACEHOLDER_API_KEY:
+            self.api_key_missing = True
+            self.client = None
+        else:
+            self.api_key_missing = False
+            self.client = AsyncOpenAI(api_key=self.api_key)
+        
         self.model = os.getenv("LLM_MODEL", "gpt-4-turbo-preview")
         self.temperature = float(os.getenv("LLM_TEMPERATURE", "0.7"))
         self.max_tokens = int(os.getenv("LLM_MAX_TOKENS", "1000"))
@@ -17,7 +28,7 @@ class ChatbotService:
         """
         Get the system prompt for the chatbot based on language.
         """
-        base_prompt = """You are an AI assistant for K2 Communications, India's premier public relations and communications agency.
+        base_prompt = """You are an expert, friendly AI assistant for K2 Communications, India's premier public relations and communications agency.
 
 K2 Communications offers:
 1. PR Consultancy - Strategic public relations and media relations
@@ -33,16 +44,18 @@ Key Values:
 - Multilingual, nationwide coverage across India
 - Working with major Indian brands across multiple sectors
 
-Your role:
+Your role as an expert, friendly K2 Communications assistant:
+- Answer PR, services, and industry queries in a professional yet approachable way
 - Explain services clearly and conversationally
-- Help potential clients understand PR concepts
-- Capture leads and answer inquiries
-- Provide crisis management guidance
+- Help potential clients understand PR concepts and best practices
+- Capture leads and answer inquiries with care
+- Provide expert crisis management guidance
 - Assist with content and media workflow questions
-- Be professional yet approachable
+- Be professional yet warm and friendly in your tone
 - Recommend appropriate services based on client needs
+- Share industry insights when relevant
 
-Always be helpful, professional, and represent K2 Communications' excellence in PR and communications."""
+Always be helpful, knowledgeable, friendly, and represent K2 Communications' excellence in PR and communications."""
 
         if language == "hi":  # Hindi
             return base_prompt + "\n\nPlease respond in Hindi when appropriate."
@@ -61,6 +74,21 @@ Always be helpful, professional, and represent K2 Communications' excellence in 
         """
         Process a user message and generate a response.
         """
+        # Check if API key is missing
+        if self.api_key_missing:
+            missing_key_message = (
+                "I apologize, but the chatbot is not fully configured yet. "
+                "The OpenAI API key is missing. Please contact the administrator "
+                "to set up the OPENAI_API_KEY in the environment configuration. "
+                "In the meantime, you can reach out to K2 Communications directly "
+                "at https://www.k2communications.in/ for assistance."
+            )
+            return {
+                "message": missing_key_message,
+                "suggestions": ["Visit K2 Communications website", "Contact support"],
+                "metadata": {"error": "OPENAI_API_KEY not configured"}
+            }
+        
         # Initialize conversation history if needed
         if conversation_id not in self.conversations:
             self.conversations[conversation_id] = []
