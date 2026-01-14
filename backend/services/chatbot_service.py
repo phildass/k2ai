@@ -3,11 +3,14 @@ from openai import AsyncOpenAI
 from typing import Optional, Dict, List
 from datetime import datetime
 
+# Constants
+PLACEHOLDER_API_KEY = "your_openai_api_key_here"
+
 class ChatbotService:
     def __init__(self):
         # Check if API key is present
         self.api_key = os.getenv("OPENAI_API_KEY")
-        if not self.api_key or self.api_key == "your_openai_api_key_here":
+        if not self.api_key or self.api_key == PLACEHOLDER_API_KEY:
             self.api_key_missing = True
             self.client = None
         else:
@@ -73,10 +76,15 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
         """
         # Check if API key is missing
         if self.api_key_missing:
+            missing_key_message = (
+                "I apologize, but the chatbot is not fully configured yet. "
+                "The OpenAI API key is missing. Please contact the administrator "
+                "to set up the OPENAI_API_KEY in the environment configuration. "
+                "In the meantime, you can reach out to K2 Communications directly "
+                "at https://www.k2communications.in/ for assistance."
+            )
             return {
-                "message": "I apologize, but the chatbot is not fully configured yet. The OpenAI API key is missing. "
-                           "Please contact the administrator to set up the OPENAI_API_KEY in the environment configuration. "
-                           "In the meantime, you can reach out to K2 Communications directly at https://www.k2communications.in/ for assistance.",
+                "message": missing_key_message,
                 "suggestions": ["Visit K2 Communications website", "Contact support"],
                 "metadata": {"error": "OPENAI_API_KEY not configured"}
             }
