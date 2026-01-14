@@ -79,13 +79,14 @@ class QAService:
         
         return score
     
-    def find_answer(self, user_message: str, threshold: float = 0.5) -> Optional[Dict]:
+    def find_answer(self, user_message: str, threshold: float = 0.3) -> Optional[Dict]:
         """
         Find a predefined answer for the user's question using fuzzy matching.
         
         Args:
             user_message: The user's question
             threshold: Minimum similarity score to consider a match (0.0 to 1.0)
+                      Default is 0.3 to allow single keyword matches
         
         Returns:
             Dictionary with 'answer', 'question', and 'confidence' if match found,
