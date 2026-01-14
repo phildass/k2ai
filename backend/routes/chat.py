@@ -11,11 +11,16 @@ def get_chatbot_service():
         get_chatbot_service._instance = ChatbotService()
     return get_chatbot_service._instance
 
+@router.post("/", response_model=ChatResponse)
 @router.post("/message", response_model=ChatResponse)
 async def send_message(request: ChatRequest):
     """
     Send a message to the AI chatbot and get a response.
     Supports multilingual conversations and context-aware responses.
+    
+    This endpoint is available at both:
+    - POST /api/chat (main endpoint)
+    - POST /api/chat/message (alternative endpoint for backward compatibility)
     """
     try:
         # Generate conversation ID if not provided
