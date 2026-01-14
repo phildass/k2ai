@@ -2,6 +2,9 @@ from fastapi import APIRouter, HTTPException
 from models.schemas import ChatRequest, ChatResponse
 from services.chatbot_service import ChatbotService
 import uuid
+import logging
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -22,9 +25,14 @@ async def send_message(request: ChatRequest):
     - POST /api/chat (main endpoint)
     - POST /api/chat/message (alternative endpoint for backward compatibility)
     """
+    # Log message preview (first 50 chars to avoid exposing sensitive data)
+    message_preview = request.message[:50] + "..." if len(request.message) > 50 else request.message
+    logger.info(f"Received chat message: '{message_preview}' (conversation_id: {request.conversation_id})")
+    
     try:
         # Generate conversation ID if not provided
         conversation_id = request.conversation_id or str(uuid.uuid4())
+        logger.info(f"Processing with conversation_id: {conversation_id}")
         
         # Get chatbot service
         chatbot_service = get_chatbot_service()
@@ -37,6 +45,8 @@ async def send_message(request: ChatRequest):
             context=request.context
         )
         
+        logger.info(f"Successfully generated response (source: {response.get('answer_source', 'unknown')})")
+        
         return ChatResponse(
             message=response["message"],
             conversation_id=conversation_id,
@@ -45,6 +55,7 @@ async def send_message(request: ChatRequest):
             answer_source=response.get("answer_source", "ai")
         )
     except Exception as e:
+        logger.error(f"Error processing chat message: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("/conversation/{conversation_id}")

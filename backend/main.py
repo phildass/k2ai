@@ -1,9 +1,18 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
+import logging
+import time
 
 from routes import chat, services, feedback
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
@@ -30,6 +39,26 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Add logging middleware
+@app.middleware("http")
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
+    logger.info(f"Incoming request: {request.method} {request.url.path}")
+    
+    # Log only non-sensitive headers
+    safe_headers = {
+        k: v for k, v in request.headers.items() 
+        if k.lower() not in ['authorization', 'cookie', 'x-api-key']
+    }
+    logger.info(f"Request headers (filtered): {safe_headers}")
+    
+    response = await call_next(request)
+    
+    process_time = time.time() - start_time
+    logger.info(f"Completed {request.method} {request.url.path} - Status: {response.status_code} - Time: {process_time:.2f}s")
+    
+    return response
 
 # Include routers
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
