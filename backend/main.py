@@ -45,7 +45,13 @@ app.add_middleware(
 async def log_requests(request: Request, call_next):
     start_time = time.time()
     logger.info(f"Incoming request: {request.method} {request.url.path}")
-    logger.info(f"Request headers: {dict(request.headers)}")
+    
+    # Log only non-sensitive headers
+    safe_headers = {
+        k: v for k, v in request.headers.items() 
+        if k.lower() not in ['authorization', 'cookie', 'x-api-key']
+    }
+    logger.info(f"Request headers (filtered): {safe_headers}")
     
     response = await call_next(request)
     

@@ -25,7 +25,9 @@ async def send_message(request: ChatRequest):
     - POST /api/chat (main endpoint)
     - POST /api/chat/message (alternative endpoint for backward compatibility)
     """
-    logger.info(f"Received chat message: '{request.message[:50]}...' (conversation_id: {request.conversation_id})")
+    # Log message preview (first 50 chars to avoid exposing sensitive data)
+    message_preview = request.message[:50] + "..." if len(request.message) > 50 else request.message
+    logger.info(f"Received chat message: '{message_preview}' (conversation_id: {request.conversation_id})")
     
     try:
         # Generate conversation ID if not provided

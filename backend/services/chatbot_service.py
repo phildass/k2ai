@@ -147,7 +147,7 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                     "language": language,
                     "timestamp": datetime.now().isoformat()
                 },
-                "answer_source": "ai"
+                "answer_source": "predefined"
             }
         
         # STEP 3: No predefined answer found - use LLM
