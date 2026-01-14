@@ -10,6 +10,11 @@ class QAService:
     Provides fuzzy matching for user questions against a curated set of FAQs.
     """
     
+    # Scoring algorithm constants
+    BASE_SCORE = 0.3  # Base score when keywords match
+    MAX_KEYWORD_SCORE = 0.6  # Maximum additional score from keyword matching
+    KEYWORD_MATCH_CEILING = 0.9  # Maximum total score from keyword matching
+    
     def __init__(self, qa_file_path: Optional[str] = None):
         """
         Initialize the QA service with predefined questions and answers.
@@ -56,14 +61,14 @@ class QAService:
         Returns:
             Similarity score (0.0 to 1.0)
         """
-        user_message_lower = user_message.lower()
+        user_message_lower = user_message.lower().strip()
+        question_lower = qa_entry['question'].lower().strip()
         score = 0.0
         
         # Check for exact question match (highest score)
-        if qa_entry['question'].lower() in user_message_lower or \
-           user_message_lower in qa_entry['question'].lower():
-            score = 1.0
-            return score
+        # Use equality check instead of substring to avoid partial matches
+        if user_message_lower == question_lower:
+            return 1.0
         
         # Check keyword matches
         keywords = qa_entry.get('keywords', [])
@@ -75,7 +80,11 @@ class QAService:
         
         # Calculate score based on keyword matches
         if matched_keywords > 0 and len(keywords) > 0:
-            score = min(0.9, 0.3 + (matched_keywords / len(keywords)) * 0.6)
+            keyword_ratio = matched_keywords / len(keywords)
+            score = min(
+                self.KEYWORD_MATCH_CEILING,
+                self.BASE_SCORE + (keyword_ratio * self.MAX_KEYWORD_SCORE)
+            )
         
         return score
     
