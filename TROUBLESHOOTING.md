@@ -195,13 +195,14 @@ python test_openai_connection.py
 1. **Check CORS configuration:**
    ```env
    # In backend/.env
-   CORS_ORIGINS=http://localhost:3000,http://localhost:8080,https://your-domain.com
+   CORS_ORIGINS=http://localhost:3000,http://localhost:8080,http://localhost:8081,https://your-domain.com
    ```
 
 2. **Verify frontend URL matches:**
    ```bash
    # If frontend is on port 3001, add it:
-   CORS_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:8080
+   CORS_ORIGINS=http://localhost:3000,http://localhost:3001,http://localhost:8080,http://localhost:8081
+   # Common ports: 3000 (Next.js), 8080 (simple server), 8081 (alternative simple server)
    ```
 
 3. **For development, temporarily allow all origins:**
