@@ -46,7 +46,7 @@ app = FastAPI(
 
 # CORS configuration
 # Default to common development origins if not specified in environment
-default_origins = "http://localhost:3000,http://localhost:8080,http://127.0.0.1:3000,http://127.0.0.1:8080"
+default_origins = "http://localhost:3000,http://localhost:8080,http://localhost:8081,http://127.0.0.1:3000,http://127.0.0.1:8080,http://127.0.0.1:8081"
 origins = os.getenv("CORS_ORIGINS", default_origins).split(",")
 
 # For development, you can use ["*"] as origins to allow all. It's less secure!
