@@ -17,6 +17,27 @@ logger = logging.getLogger(__name__)
 # Load environment variables
 load_dotenv()
 
+# Check OpenAI API configuration at startup
+PLACEHOLDER_API_KEY = "your_openai_api_key_here"
+api_key = os.getenv("OPENAI_API_KEY")
+
+if not api_key or api_key == PLACEHOLDER_API_KEY:
+    logger.warning("="*70)
+    logger.warning("⚠ OPENAI_API_KEY is not configured!")
+    logger.warning("The chatbot will use predefined Q&A only.")
+    logger.warning("For live AI responses, please:")
+    logger.warning("1. Create backend/.env file (copy from .env.example)")
+    logger.warning("2. Set OPENAI_API_KEY=your-actual-key")
+    logger.warning("3. Restart the server")
+    logger.warning("See OPENAI_SETUP_GUIDE.md for detailed instructions")
+    logger.warning("="*70)
+else:
+    logger.info("="*70)
+    logger.info("✓ OpenAI API key loaded successfully")
+    logger.info(f"✓ Using model: {os.getenv('LLM_MODEL', 'gpt-4-turbo-preview')}")
+    logger.info("✓ Live AI assistant is enabled")
+    logger.info("="*70)
+
 app = FastAPI(
     title="K2 Communications AI Chatbot API",
     description="AI-powered chatbot for K2 Communications - India's premier PR agency",
@@ -75,7 +96,34 @@ async def root():
 
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy"}
+    """
+    Health check endpoint that includes OpenAI API status.
+    Returns detailed health information about the service.
+    """
+    health_status = {
+        "status": "healthy",
+        "version": "1.0.0",
+        "api": {
+            "openai_configured": False,
+            "openai_key_status": "missing",
+            "llm_model": os.getenv("LLM_MODEL", "gpt-4-turbo-preview")
+        },
+        "features": {
+            "predefined_qa": True,
+            "live_ai": False
+        }
+    }
+    
+    # Check OpenAI API key status
+    api_key = os.getenv("OPENAI_API_KEY")
+    if api_key and api_key != PLACEHOLDER_API_KEY:
+        health_status["api"]["openai_configured"] = True
+        health_status["api"]["openai_key_status"] = "configured"
+        health_status["features"]["live_ai"] = True
+    elif api_key == PLACEHOLDER_API_KEY:
+        health_status["api"]["openai_key_status"] = "placeholder"
+    
+    return health_status
 
 if __name__ == "__main__":
     import uvicorn

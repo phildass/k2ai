@@ -198,9 +198,11 @@ npm run dev
 
 ### Environment Configuration
 
+> **⚠️ IMPORTANT:** For detailed OpenAI API setup instructions, see **[OPENAI_SETUP_GUIDE.md](OPENAI_SETUP_GUIDE.md)**
+
 **Backend (.env):**
 ```env
-OPENAI_API_KEY=your_openai_api_key_here
+OPENAI_API_KEY=your_openai_api_key_here  # Get from https://platform.openai.com/api-keys
 LLM_MODEL=gpt-4-turbo-preview
 LLM_TEMPERATURE=0.7
 LLM_MAX_TOKENS=1000
@@ -211,6 +213,24 @@ CORS_ORIGINS=http://localhost:3000
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
+
+### Verify Your Setup
+
+After configuration, verify your OpenAI integration:
+
+```bash
+cd backend
+python test_openai_connection.py
+```
+
+Expected output:
+```
+✓ OpenAI API key is configured
+✓ Successfully connected to OpenAI API
+✓ Live AI assistant is working!
+```
+
+**Need help?** See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for common issues and solutions.
 
 ## 📖 API Documentation
 
