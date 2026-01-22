@@ -206,7 +206,7 @@ export default function Home() {
       <footer className="bg-gray-900 text-white py-8 px-4">
         <div className="max-w-7xl mx-auto text-center">
           <p className="text-gray-400">
-            © 2026 K2 Communications. All rights reserved. India's Premier PR Agency.
+            © {new Date().getFullYear()} K2 Communications. All rights reserved. India's Premier PR Agency.
           </p>
           <p className="text-gray-500 text-sm mt-2">
             This is a static demonstration page. Links are non-functional.
