@@ -6,11 +6,24 @@ This guide explains how to deploy the K2 AI test page to testk2ai.unnon.ai.
 
 The test page is a simple HTML page with the title "Testing page for K2 AI" deployed at the custom domain testk2ai.unnon.ai.
 
+## Quick Start - Simple Static Deployment
+
+For the simplest deployment option, use the `index.html` file in the root directory:
+
+1. Upload `index.html` to any static hosting service (Vercel, Netlify, GitHub Pages, etc.)
+2. Configure custom domain to point to testk2ai.unnon.ai
+3. Done!
+
+## Full Application Deployment
+
+For deploying the full Next.js application:
+
 ## Prerequisites
 
 1. Vercel account with access to deploy
 2. DNS access to configure the unnon.ai domain
 3. GitHub repository connected to Vercel
+4. Vercel access token for automated deployments (optional, for GitHub Actions)
 
 ## Deployment Steps
 
@@ -84,6 +97,27 @@ dig testk2ai.unnon.ai
 
 # Or use online tools
 # https://www.whatsmydns.net/#A/testk2ai.unnon.ai
+```
+
+## Troubleshooting
+
+### Automated Deployment (GitHub Actions)
+
+A GitHub Actions workflow is configured in `.github/workflows/deploy.yml` for automated deployment. To use it:
+
+1. In your GitHub repository, go to Settings → Secrets and variables → Actions
+2. Add the following secrets:
+   - `VERCEL_TOKEN`: Your Vercel access token (from Vercel Account Settings → Tokens)
+   - `VERCEL_ORG_ID`: Your Vercel organization ID (found in `.vercel/project.json` after running `vercel link`)
+   - `VERCEL_PROJECT_ID`: Your Vercel project ID (found in `.vercel/project.json` after running `vercel link`)
+
+3. The workflow will automatically deploy on push to `main` branch or the deployment branch.
+
+To get your organization and project IDs:
+```bash
+cd frontend
+vercel link
+cat .vercel/project.json
 ```
 
 ## Troubleshooting
