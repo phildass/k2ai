@@ -28,7 +28,7 @@ The backend is a Python FastAPI application.
    - **Name**: `k2ai-backend` (or any name you prefer)
    - **Branch**: `main` (or your default branch)
    - **Root Directory**: `backend`
-   - **Runtime**: `Python 3`
+   - **Runtime**: `Python 3.11`
    - **Build Command**: `pip install -r requirements.txt`
    - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
    - **Instance Type**: Free tier or as needed

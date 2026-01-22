@@ -27,7 +27,7 @@ The application is deployed on **Render** (https://render.com) for both frontend
    - **Name**: `k2ai-backend`
    - **Branch**: `main`
    - **Root Directory**: `backend`
-   - **Runtime**: `Python 3`
+   - **Runtime**: `Python 3.11`
    - **Build Command**: `pip install -r requirements.txt`
    - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
 
