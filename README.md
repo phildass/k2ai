@@ -391,7 +391,6 @@ The repository includes a simple Node.js/Express server for testing deployments 
 - Never commit `.env` files with real API keys to GitHub
 - The server automatically uses `process.env.PORT` provided by Render
 - No code changes needed for custom domain - handled by Render and DNS
-- For CORS configuration (if needed for frontend), set `CORS_ORIGINS` environment variable
 - Render free tier apps may spin down after inactivity - first request might be slow
 
 ### Vercel (Frontend - React/Next.js)
