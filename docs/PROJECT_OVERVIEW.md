@@ -236,11 +236,7 @@ See [docs/QUICKSTART.md](docs/QUICKSTART.md)
 ## Deployment
 
 Ready for deployment to:
-- ✅ Vercel (Frontend)
-- ✅ Railway/Render (Backend)
-- ✅ AWS ECS/Fargate
-- ✅ Azure Container Instances
-- ✅ Google Cloud Run
+- ✅ Render (Frontend and Backend)
 - ✅ Any Docker-compatible platform
 
 See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed instructions.

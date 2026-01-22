@@ -239,10 +239,7 @@ When deploying to production:
 export OPENAI_API_KEY="your-production-key"
 
 # Or use your platform's environment variable system
-# Vercel: Add in project settings
-# Railway: Add in project variables
-# AWS: Use AWS Secrets Manager
-# Azure: Use Azure Key Vault
+# Render: Add in Environment tab in service settings
 ```
 
 ## Cost Management

@@ -207,10 +207,9 @@ Replace in-memory storage with a database:
 
 See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
 
-Quick deployment options:
-- **Frontend**: Deploy to Vercel with one click
-- **Backend**: Deploy to Railway or Render
-- **Full Stack**: Use Docker on any cloud provider
+Quick deployment option:
+- **Platform**: Deploy both frontend and backend to Render
+- **Alternative**: Use Docker with Docker Compose on any cloud platform
 
 ## Useful Commands
 

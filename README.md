@@ -94,7 +94,7 @@ K2 Communications (https://www.k2communications.in/) is a leading PR agency in I
 
 **Deployment:**
 - **Containerization**: Docker & Docker Compose
-- **Recommended Platforms**: Vercel (frontend), Railway/Render (backend), or AWS/Azure
+- **Platform**: Render for both frontend and backend
 
 ### Project Structure
 
@@ -374,9 +374,9 @@ Update K2's services in:
 
 ## 🚢 Deployment
 
-### Render (Node.js Test Server)
+### Render Deployment
 
-The repository includes a simple Node.js/Express server for testing deployments to Render.
+The repository is deployed to Render for both frontend and backend services.
 
 **Prerequisites:**
 - GitHub account connected to Render
@@ -384,85 +384,36 @@ The repository includes a simple Node.js/Express server for testing deployments 
 
 **Deployment Steps:**
 
-1. **Push to GitHub**
-   ```bash
-   git push origin main
-   # or your default branch (e.g., master)
-   ```
+For detailed deployment instructions, see [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md).
 
-2. **Create New Web Service on Render**
-   - Go to https://dashboard.render.com/
-   - Click "New +" → "Web Service"
+**Quick Overview:**
+
+1. **Backend Deployment**
+   - Create a new Web Service on Render
    - Connect your GitHub repository: `phildass/k2ai`
-   - Configure the service:
-     - **Name**: `k2ai` (or any name you prefer)
-     - **Branch**: `main` (or your default branch)
-     - **Root Directory**: Leave blank (uses root)
-     - **Runtime**: `Node`
-     - **Build Command**: `npm install`
-     - **Start Command**: `npm start`
-     - **Instance Type**: Free tier or as needed
+   - Set root directory to `backend`
+   - Configure runtime: Python 3
+   - Set environment variables (OPENAI_API_KEY, etc.)
+   - Deploy
 
-3. **Set Environment Variables**
-   - In Render dashboard, go to "Environment" tab
-   - Add the following environment variable:
-     - **Key**: `OPENAI_API_KEY`
-     - **Value**: Your OpenAI API key (starts with `sk-`)
-   - Click "Save Changes"
+2. **Frontend Deployment**
+   - Create a new Web Service on Render
+   - Connect your GitHub repository: `phildass/k2ai`
+   - Set root directory to `frontend`
+   - Configure runtime: Node
+   - Set environment variables (NEXT_PUBLIC_API_URL)
+   - Deploy
 
-4. **Deploy**
-   - Render will automatically deploy your application
-   - Wait for deployment to complete (check logs for any errors)
-   - Your app will be available at: `https://your-app-name.onrender.com`
-
-5. **Add Custom Domain (Optional - testk2ai.unnon.ai)**
-   
-   **On Render:**
-   - Go to your service → "Settings" → "Custom Domains"
-   - Click "Add Custom Domain"
-   - Enter: `testk2ai.unnon.ai`
-   - Render will provide CNAME or A record values
-   
-   **On Your DNS Provider:**
-   - Log in to your DNS provider (e.g., unnon.ai domain registrar)
-   - Add a CNAME record:
-     - **Name/Host**: `testk2ai`
-     - **Value/Target**: Your Render URL (e.g., `k2ai.onrender.com`)
-     - **TTL**: 3600 (or default)
-   - Save the DNS record
-   
-   **Note:** DNS propagation can take up to 48 hours, but typically happens within minutes to hours.
-
-6. **Verify Deployment**
-   - Visit your Render URL or custom domain
-   - You should see: "Testing page for K2 AI"
-   - Check `/health` endpoint to verify OpenAI API key is configured
+3. **Custom Domain (Optional)**
+   - Configure custom domain in Render settings
+   - Update DNS records with your DNS provider
 
 **Important Notes:**
 - Never commit `.env` files with real API keys to GitHub
 - The server automatically uses `process.env.PORT` provided by Render
-- No code changes needed for custom domain - handled by Render and DNS
 - Render free tier apps may spin down after inactivity - first request might be slow
+- See [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) for complete instructions
 
-### Vercel (Frontend - React/Next.js)
-
-```bash
-cd frontend
-npm install -g vercel
-vercel
-```
-
-### Railway/Render (Python Backend - FastAPI)
-
-1. Connect your GitHub repository
-2. Set environment variables (OPENAI_API_KEY)
-3. Deploy from `backend/` directory
-4. Use Python runtime with build command: `pip install -r requirements.txt`
-5. Start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-
-### AWS/Azure
-
-Use the provided Dockerfiles for containerized deployment on any cloud platform.
 
 ## 🧪 Testing
 
