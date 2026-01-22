@@ -63,7 +63,7 @@ The K2 AI Chatbot is a comprehensive, production-ready AI-powered conversational
 
 ### DevOps
 - **Containerization**: Docker & Docker Compose
-- **Deployment Ready**: Vercel, Railway, Render, AWS, Azure, GCP
+- **Deployment**: Render
 - **Version Control**: Git/GitHub
 
 ## Architecture
