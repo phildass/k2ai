@@ -35,7 +35,7 @@ For deploying the full Next.js application:
 npm install -g vercel
 
 # Navigate to the project root
-cd /home/runner/work/k2ai/k2ai
+cd /path/to/k2ai
 
 # Deploy to Vercel
 vercel --prod

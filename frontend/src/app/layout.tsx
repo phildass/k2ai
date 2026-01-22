@@ -2,8 +2,8 @@ import '@/styles/globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'K2 Communications AI Assistant',
-  description: 'AI-powered chatbot for K2 Communications - India\'s premier PR agency',
+  title: 'Testing page for K2 AI',
+  description: 'Test page for K2 AI application deployment',
 };
 
 export default function RootLayout({

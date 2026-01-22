@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - copilot/deploy-k2-ai-test-page
   pull_request:
     branches:
       - main
