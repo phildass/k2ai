@@ -1,96 +1,124 @@
-# Deployment Guide for testk2ai.unnon.ai
+# Deployment Guide for K2 AI
 
-This guide explains how to deploy the K2 AI test page to testk2ai.unnon.ai.
+This guide explains how to deploy the K2 AI application using Render.
 
 ## Overview
 
-The test page is a simple HTML page with the title "Testing page for K2 AI" deployed at the custom domain testk2ai.unnon.ai.
-
-## Quick Start - Simple Static Deployment
-
-For the simplest deployment option, use the `index.html` file in the root directory:
-
-1. Upload `index.html` to any static hosting service (Vercel, Netlify, GitHub Pages, etc.)
-2. Configure custom domain to point to testk2ai.unnon.ai
-3. Done!
-
-## Full Application Deployment
-
-For deploying the full Next.js application:
+The K2 AI application is deployed at Render for both frontend and backend services.
 
 ## Prerequisites
 
-1. Vercel account with access to deploy
-2. DNS access to configure the unnon.ai domain
-3. GitHub repository connected to Vercel
-4. Vercel access token for automated deployments (optional, for GitHub Actions)
+1. Render account (sign up at https://render.com)
+2. GitHub account with repository access
+3. DNS access to configure custom domains (optional)
+4. OpenAI API key from https://platform.openai.com/api-keys
 
 ## Deployment Steps
 
-### 1. Deploy to Vercel
+### 1. Deploy Backend to Render
 
-#### Option A: Via Vercel CLI
-```bash
-# Install Vercel CLI if not already installed
-npm install -g vercel
+The backend is a Python FastAPI application.
 
-# Navigate to the project root
-cd /path/to/k2ai
+1. **Create New Web Service**
+   - Go to https://dashboard.render.com/
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository: `phildass/k2ai`
+   
+2. **Configure Backend Service**
+   - **Name**: `k2ai-backend` (or any name you prefer)
+   - **Branch**: `main` (or your default branch)
+   - **Root Directory**: `backend`
+   - **Runtime**: `Python 3.11`
+   - **Build Command**: `pip install -r requirements.txt`
+   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+   - **Instance Type**: Free tier or as needed
 
-# Deploy to Vercel
-vercel --prod
-```
+3. **Set Environment Variables**
+   - In Render dashboard, go to "Environment" tab
+   - Add the following environment variables:
+     - **Key**: `OPENAI_API_KEY`, **Value**: Your OpenAI API key (starts with `sk-`)
+     - **Key**: `ADMIN_PASSWORD`, **Value**: Your admin password
+     - **Key**: `CORS_ORIGINS`, **Value**: Your frontend URL (e.g., `https://your-frontend.onrender.com`)
+   - Click "Save Changes"
 
-#### Option B: Via Vercel Dashboard
-1. Go to https://vercel.com/dashboard
-2. Click "Add New Project"
-3. Import the `phildass/k2ai` repository
-4. Configure:
-   - Framework Preset: Next.js
-   - Root Directory: `frontend`
-   - Build Command: `npm run build`
-   - Output Directory: `.next`
-5. Click "Deploy"
+4. **Deploy**
+   - Render will automatically deploy your backend
+   - Wait for deployment to complete (check logs for any errors)
+   - Your backend will be available at: `https://your-backend-name.onrender.com`
 
-### 2. Configure Custom Domain
+### 2. Deploy Frontend to Render
 
-After initial deployment:
+The frontend is a Next.js application.
 
-1. Go to your project in Vercel Dashboard
-2. Navigate to Settings → Domains
-3. Add custom domain: `testk2ai.unnon.ai`
-4. Vercel will provide DNS records to configure
+1. **Create New Web Service**
+   - Go to https://dashboard.render.com/
+   - Click "New +" → "Web Service"
+   - Connect your GitHub repository: `phildass/k2ai`
+   
+2. **Configure Frontend Service**
+   - **Name**: `k2ai-frontend` (or any name you prefer)
+   - **Branch**: `main` (or your default branch)
+   - **Root Directory**: `frontend`
+   - **Runtime**: `Node`
+   - **Build Command**: `npm install && npm run build`
+   - **Start Command**: `npm start`
+   - **Instance Type**: Free tier or as needed
 
-### 3. DNS Configuration
+3. **Set Environment Variables**
+   - In Render dashboard, go to "Environment" tab
+   - Add the following environment variable:
+     - **Key**: `NEXT_PUBLIC_API_URL`, **Value**: Your backend URL (e.g., `https://your-backend-name.onrender.com`)
+   - Click "Save Changes"
 
-Configure the following DNS records in your unnon.ai DNS provider:
+4. **Deploy**
+   - Render will automatically deploy your frontend
+   - Wait for deployment to complete (check logs for any errors)
+   - Your frontend will be available at: `https://your-frontend-name.onrender.com`
 
-**For testk2ai.unnon.ai:**
+### 3. Configure Custom Domain (Optional)
 
-- **Type**: CNAME
-- **Name**: testk2ai
-- **Value**: cname.vercel-dns.com
-- **TTL**: 3600 (or automatic)
+**On Render:**
+- Go to your service → "Settings" → "Custom Domains"
+- Click "Add Custom Domain"
+- Enter your custom domain (e.g., `testk2ai.unnon.ai`)
+- Render will provide CNAME or A record values
 
-OR
+**On Your DNS Provider:**
+- Log in to your DNS provider (e.g., domain registrar)
+- Add a CNAME record:
+  - **Name/Host**: `testk2ai` (or your subdomain)
+  - **Value/Target**: Your Render URL (e.g., `your-app.onrender.com`)
+  - **TTL**: 3600 (or default)
+- Save the DNS record
 
-- **Type**: A
-- **Name**: testk2ai
-- **Value**: 76.76.21.21 (Vercel's IPv4)
-- **TTL**: 3600
-
-**Additional AAAA record for IPv6 (optional):**
-- **Type**: AAAA
-- **Name**: testk2ai
-- **Value**: 2606:4700:10::6816:1515 (Vercel's IPv6)
+**Note:** DNS propagation can take up to 48 hours, but typically happens within minutes to hours.
 
 ### 4. Verify Deployment
 
-1. Wait for DNS propagation (can take up to 48 hours, usually much faster)
-2. Visit https://testk2ai.unnon.ai
-3. You should see the test page with "Testing page for K2 AI"
+1. **Backend Health Check**
+   - Visit `https://your-backend-name.onrender.com/health`
+   - You should see a JSON response with health status
 
-#### Check DNS propagation:
+2. **Frontend Check**
+   - Visit `https://your-frontend-name.onrender.com`
+   - You should see the K2 AI chatbot interface
+
+3. **Test Integration**
+   - Try sending a message in the chat interface
+   - Verify the backend is responding correctly
+
+## DNS Configuration
+
+Configure DNS records in your DNS provider:
+
+**For custom domain (e.g., testk2ai.unnon.ai):**
+
+- **Type**: CNAME
+- **Name**: testk2ai (or your subdomain)
+- **Value**: your-app.onrender.com (provided by Render)
+- **TTL**: 3600 (or automatic)
+
+Check DNS propagation:
 ```bash
 # Check if DNS is propagated
 dig testk2ai.unnon.ai
@@ -99,67 +127,91 @@ dig testk2ai.unnon.ai
 # https://www.whatsmydns.net/#A/testk2ai.unnon.ai
 ```
 
-## Troubleshooting
+## Environment Variables Reference
 
-### Automated Deployment (GitHub Actions)
+### Backend Environment Variables
+- `OPENAI_API_KEY` - Required: Your OpenAI API key
+- `ADMIN_PASSWORD` - Required: Admin panel password
+- `CORS_ORIGINS` - Required: Allowed frontend origins
+- `LLM_MODEL` - Optional: OpenAI model (default: gpt-4-turbo-preview)
+- `LLM_TEMPERATURE` - Optional: Response creativity (default: 0.7)
+- `LLM_MAX_TOKENS` - Optional: Max response length (default: 1000)
 
-A GitHub Actions workflow is configured in `.github/workflows/deploy.yml` for automated deployment. To use it:
-
-1. In your GitHub repository, go to Settings → Secrets and variables → Actions
-2. Add the following secrets:
-   - `VERCEL_TOKEN`: Your Vercel access token (from Vercel Account Settings → Tokens)
-   - `VERCEL_ORG_ID`: Your Vercel organization ID (found in `.vercel/project.json` after running `vercel link`)
-   - `VERCEL_PROJECT_ID`: Your Vercel project ID (found in `.vercel/project.json` after running `vercel link`)
-
-3. The workflow will automatically deploy on push to `main` branch or the deployment branch.
-
-To get your organization and project IDs:
-```bash
-cd frontend
-vercel link
-cat .vercel/project.json
-```
+### Frontend Environment Variables
+- `NEXT_PUBLIC_API_URL` - Required: Backend API URL
 
 ## Troubleshooting
 
-### Domain not working
-- Check DNS configuration
-- Verify CNAME/A record is correct
-- Wait for DNS propagation (use `dig` or `nslookup` to check)
-- Check Vercel dashboard for domain status
+### Backend Issues
 
-### Build failures
-- Check Vercel deployment logs
-- Ensure all dependencies are in package.json
+**Service won't start**
+- Check deployment logs in Render Dashboard
+- Verify all environment variables are set correctly
+- Ensure `requirements.txt` is present in backend directory
+- Check that `OPENAI_API_KEY` is valid
+
+**CORS errors**
+- Update `CORS_ORIGINS` to include your frontend URL
+- Redeploy the backend after updating environment variables
+
+### Frontend Issues
+
+**Build failures**
+- Check Render deployment logs
+- Ensure all dependencies are in `package.json`
 - Verify Node.js version compatibility
 
-### SSL Certificate issues
-- Vercel automatically provisions SSL certificates
+**Can't connect to backend**
+- Verify `NEXT_PUBLIC_API_URL` points to the correct backend URL
+- Check backend is running and accessible
+- Look for CORS errors in browser console
+
+### DNS Issues
+
+**Domain not working**
+- Verify DNS configuration matches Render's instructions
+- Wait for DNS propagation (can take up to 48 hours)
+- Use `dig` or online tools to check propagation status
+
+### SSL Certificate Issues
+
+**HTTPS not working**
+- Render automatically provisions SSL certificates
 - May take a few minutes after DNS is configured
-- Check Vercel dashboard for certificate status
+- Check Render dashboard for certificate status
 
-## Environment Variables
+## Monitoring and Logs
 
-For this simple test page, no environment variables are required. The page is static and doesn't connect to the backend API.
+### View Logs
+- Go to Render Dashboard
+- Select your service
+- Click on "Logs" tab
+- View real-time logs and errors
+
+### Monitor Performance
+- Check service metrics in Render Dashboard
+- Monitor response times and uptime
+- Set up alerts for service downtime
+
+## Important Notes
+
+- Render free tier apps may spin down after inactivity - first request might be slow
+- The server automatically uses `process.env.PORT` provided by Render
+- No code changes needed for custom domain - handled by Render and DNS
+- Always redeploy after updating environment variables
 
 ## Rollback
 
-To rollback to a previous version:
-1. Go to Vercel Dashboard
-2. Navigate to Deployments
-3. Select a previous deployment
-4. Click "Promote to Production"
-
-## Additional Notes
-
-- The current deployment is a simple test page
-- To deploy the full K2 AI application, revert the changes to `frontend/src/app/page.tsx`
-- The backend API is not included in this deployment (frontend only)
-- For production deployment with backend, see the main README.md
+To rollback to a previous deployment:
+1. Go to Render Dashboard
+2. Navigate to your service
+3. Click on "Deploys" tab
+4. Find a previous successful deployment
+5. Click "Redeploy" on that version
 
 ## Support
 
 For deployment issues:
-- Check Vercel documentation: https://vercel.com/docs
-- Review deployment logs in Vercel Dashboard
+- Check Render documentation: https://render.com/docs
+- Review deployment logs in Render Dashboard
 - Contact the development team
