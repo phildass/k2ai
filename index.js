@@ -1,4 +1,3 @@
-// index.js
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
@@ -130,66 +129,5 @@ app.get('/', (req, res) => {
           const myMsg = prompt.value;
           addMsg('You', myMsg);
           prompt.value = '';
-          addMsg('K2', '...');
-          try {
-            const res = await fetch('/ask', {
-              method: 'POST',
-              headers: {'Content-Type':'application/json'},
-              body: JSON.stringify({prompt: myMsg})
-            });
-            const data = await res.json();
-            messages.lastChild.innerText = 'K2: ' + (data.response || data.error || "No answer");
-          } catch {
-            messages.lastChild.innerText = 'K2: (Error, could not connect)';
-          }
-        };
-        function addMsg(sender, txt) {
-          const el = document.createElement('div');
-          el.innerText = sender + ": " + txt;
-          messages.appendChild(el);
-          messages.scrollTop = messages.scrollHeight;
-        }
-      </script>
-    </body>
-    </html>
-  `);
-});
-
-// Q&A endpoint placeholder (needs real implementation)
-app.post('/ask', (req, res) => {
-  // For now, just returns a canned response
-  res.json({ response: "This is a placeholder response from K2 AI. Backend integration needed!" });
-});
-
-// Basic /admin route placeholder
-app.get('/admin', (req, res) => {
-  res.send(`
-    <h2>K2 AI Assistant Admin Panel</h2>
-    <p>This page is under construction. Admin tools for managing custom Q/A will appear here.</p>
-  `);
-});
-
-// Health check endpoint
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    env: {
-      hasOpenAIKey: !!process.env.OPENAI_API_KEY,
-      port: PORT
-    }
-  });
-});
-
-// Start server
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(\`K2 AI Server running on port \${PORT}\`);
-  console.log(\`Environment: \${process.env.NODE_ENV || 'development'}\`);
-  // Check for OpenAI API key
-  if (!process.env.OPENAI_API_KEY) {
-    console.warn('⚠️  WARNING: OPENAI_API_KEY is not set in environment variables');
-    console.warn('   Set OPENAI_API_KEY in your .env file or Render dashboard');
-  } else {
-    console.log('✓ OPENAI_API_KEY is configured');
-  }
-});
+          addMsg('
+
