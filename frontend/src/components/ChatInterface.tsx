@@ -10,6 +10,7 @@ export default function ChatInterface() {
       role: 'assistant',
       content: 'Hello! I\'m the K2 Communications AI assistant. How can I help you today? I can tell you about our PR services, crisis management, digital marketing, and more!',
       timestamp: new Date().toISOString(),
+      source: 'system',
     },
   ]);
   const [input, setInput] = useState('');
@@ -57,6 +58,7 @@ export default function ChatInterface() {
         role: 'assistant',
         content: response.message,
         timestamp: response.metadata?.timestamp || new Date().toISOString(),
+        source: response.answer_source || 'ai',
       };
 
       setMessages((prev) => [...prev, assistantMessage]);
@@ -107,11 +109,24 @@ export default function ChatInterface() {
               }`}
             >
               <p className="whitespace-pre-wrap">{message.content}</p>
-              {message.timestamp && (
-                <p className="text-xs mt-1 opacity-70">
-                  {new Date(message.timestamp).toLocaleTimeString()}
-                </p>
-              )}
+              <div className="flex items-center justify-between mt-1">
+                {message.timestamp && (
+                  <p className="text-xs opacity-70">
+                    {new Date(message.timestamp).toLocaleTimeString()}
+                  </p>
+                )}
+                {message.role === 'assistant' && message.source && message.source !== 'system' && (
+                  <span className={`text-xs ml-2 px-2 py-0.5 rounded ${
+                    message.source === 'admin' 
+                      ? 'bg-green-200 text-green-800' 
+                      : message.source === 'faq' || message.source === 'predefined'
+                      ? 'bg-blue-200 text-blue-800'
+                      : 'bg-purple-200 text-purple-800'
+                  }`}>
+                    {message.source === 'admin' ? 'Admin Answer' : message.source === 'faq' || message.source === 'predefined' ? 'Curated Answer' : 'AI Generated'}
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         ))}

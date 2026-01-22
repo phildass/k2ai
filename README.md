@@ -21,50 +21,58 @@ K2 Communications (https://www.k2communications.in/) is a leading PR agency in I
 
 ## 🚀 Features
 
-### 1. Hybrid Q&A System (NEW!)
+### 1. Admin-Managed Q&A System (NEW!)
+- **Admin Panel**: Web-based interface at `/admin` to manage Q&A pairs
+- **Live Updates**: Add, edit, or delete Q&A pairs without redeployment
+- **Priority Answers**: Admin-curated answers take precedence over AI responses
+- **Answer Source Indicators**: Clear labels showing if answers are "Admin", "Curated", or "AI Generated"
+- **Secure Access**: Password-protected admin interface
+- **Persistent Storage**: Q&A pairs stored in JSON file, survive restarts
+
+### 2. Hybrid Q&A System
 - **Predefined Q&A**: Fast, consistent answers for common questions
 - **LLM Fallback**: AI-powered responses for complex or unique queries
 - **Smart Matching**: Keyword-based fuzzy matching with confidence scores
 - **Easy Maintenance**: Update Q&A via JSON file without code changes
 - See `backend/QA_IMPLEMENTATION.md` for details
 
-### 2. Service Discovery & Lead Capture
+### 3. Service Discovery & Lead Capture
 - **Conversational explanations of K2's core services**
 - **Interactive client intake forms**
 - **Instant inquiry capture and routing**
 - **Service recommendations based on client needs**
 
-### 3. PR Operations & Crisis Support
+### 4. PR Operations & Crisis Support
 - **FAQs for crisis management scenarios**
 - **Reputation repair guidance**
 - **24/7 crisis communication support**
 
-### 4. Content & Media Workflow
+### 5. Content & Media Workflow
 - **AI-assisted press release briefing**
 - **Content writing tips and guidance**
 - **Blog and article preparation support**
 
-### 5. Multilingual Conversations
+### 6. Multilingual Conversations
 - **Support for English and Indian regional languages**
 - **Seamless language switching**
 - **Cultural adaptation in responses**
 
-### 6. Client Campaign Dashboard (Planned)
+### 7. Client Campaign Dashboard (Planned)
 - **Campaign progress tracking**
 - **Coverage reports**
 - **News updates**
 
-### 7. Event & Interaction Scheduling (Planned)
+### 8. Event & Interaction Scheduling (Planned)
 - **Interview booking**
 - **Press event scheduling**
 - **Automated reminders**
 
-### 8. Feedback Collection
+### 9. Feedback Collection
 - **Automated feedback gathering**
 - **AI sentiment analysis**
 - **Service improvement insights**
 
-### 9. Social Media Integration (Planned)
+### 10. Social Media Integration (Planned)
 - **Campaign posting assistance**
 - **Digital PR support**
 - **Social media advisory**
@@ -203,6 +211,7 @@ npm run dev
 **Backend (.env):**
 ```env
 OPENAI_API_KEY=your_openai_api_key_here  # Get from https://platform.openai.com/api-keys
+ADMIN_PASSWORD=k2admin2026  # Change this to a secure password for production
 LLM_MODEL=gpt-4-turbo-preview
 LLM_TEMPERATURE=0.7
 LLM_MAX_TOKENS=1000
@@ -232,6 +241,47 @@ Expected output:
 
 **Need help?** See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for common issues and solutions.
 
+## 📊 Admin Panel
+
+The admin panel allows authorized users to manage Q&A pairs that take priority over AI-generated responses.
+
+### Access the Admin Panel
+
+1. **Navigate to** `http://localhost:3000/admin` (or your deployed URL + `/admin`)
+2. **Login with password**: Default is `k2admin2026` (set via `ADMIN_PASSWORD` environment variable)
+3. **Manage Q&A pairs**: Add, edit, or delete custom responses
+
+### Admin Features
+
+- **Add Q&A Pairs**: Create new question-answer pairs that the AI will use
+- **Edit Existing Pairs**: Update questions or answers as needed
+- **Delete Pairs**: Remove outdated Q&A pairs
+- **Live Updates**: Changes take effect immediately without restarting the server
+- **Persistent Storage**: All Q&A pairs are stored in `backend/data/admin_qa.json`
+
+### Answer Priority
+
+When a user asks a question, the system checks answers in this order:
+1. **Admin Q&A** (highest priority) - Manually curated answers from `/admin`
+2. **FAQ Answers** - Private FAQ entries in `backend/private_faq/faqs.json`
+3. **Predefined Q&A** - Public Q&A in `backend/data/predefined_qa.json`
+4. **AI Generated** (lowest priority) - OpenAI API for unknown queries
+
+### Answer Source Indicators
+
+The chat interface displays badges showing the source of each answer:
+- 🟢 **Admin Answer** - From admin panel
+- 🔵 **Curated Answer** - From FAQ or predefined Q&A
+- 🟣 **AI Generated** - From OpenAI API
+
+### Security Notes
+
+⚠️ **Important for Production:**
+- Change the default `ADMIN_PASSWORD` in your `.env` file
+- Use a strong, unique password
+- Consider implementing proper authentication (OAuth, JWT) for production use
+- The current implementation is a simple token-based auth suitable for internal use
+
 ## 📖 API Documentation
 
 ### Chat Endpoints
@@ -241,7 +291,7 @@ Expected output:
 - Supports predefined Q&A with LLM fallback
 - Supports multilingual conversations
 - Returns AI response with suggestions and metadata
-- Response includes `source` field: "predefined" or "llm"
+- Response includes `answer_source` field: "admin", "faq", "predefined", or "ai"
 
 **Example Request:**
 ```bash
@@ -256,6 +306,7 @@ curl -X POST "http://localhost:8000/api/chat/" \
   "message": "K2 Communications offers comprehensive PR and communications services...",
   "conversation_id": "test-123",
   "suggestions": ["Tell me more about PR consultancy", "What is crisis management?"],
+  "answer_source": "predefined",
   "metadata": {
     "source": "predefined",
     "matched_question": "What services do you offer?",
