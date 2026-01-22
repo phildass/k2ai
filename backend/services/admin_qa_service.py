@@ -75,7 +75,12 @@ class AdminQAService:
         Returns:
             The created Q&A pair with ID
         """
-        qa_id = max([qa.get('id', 0) for qa in self.qa_pairs], default=0) + 1
+        # Find the maximum existing ID and add 1, ensuring no collision even after deletions
+        existing_ids = [qa.get('id', 0) for qa in self.qa_pairs]
+        if existing_ids:
+            qa_id = max(existing_ids) + 1
+        else:
+            qa_id = 1
         
         new_pair = {
             'id': qa_id,
