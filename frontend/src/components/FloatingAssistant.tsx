@@ -113,7 +113,7 @@ export default function FloatingAssistant() {
 
           {/* Pulsing ring animation when closed */}
           {!isOpen && (
-            <div className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20"></div>
+            <div className="absolute inset-0 rounded-full bg-blue-600 animate-ping opacity-20 pointer-events-none"></div>
           )}
         </div>
       </div>
