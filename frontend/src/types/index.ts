@@ -2,16 +2,19 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp?: string;
+  source?: string;
 }
 
 export interface ChatResponse {
   message: string;
   conversation_id: string;
   suggestions?: string[];
+  answer_source?: string;
   metadata?: {
     language?: string;
     model?: string;
     timestamp?: string;
+    source?: string;
   };
 }
 

@@ -4,6 +4,7 @@ from typing import Optional, Dict, List
 from datetime import datetime
 from .faq_service import FAQService
 from services.qa_service import QAService
+from services.admin_qa_service import AdminQAService
 
 # Constants
 PLACEHOLDER_API_KEY = "your_openai_api_key_here"
@@ -25,6 +26,9 @@ class ChatbotService:
         
         # Initialize QA Service for predefined answers
         self.qa_service = QAService()
+        
+        # Initialize Admin QA Service for admin-curated answers
+        self.admin_qa_service = AdminQAService()
         
         # In-memory conversation storage (replace with database in production)
         self.conversations: Dict[str, List[Dict]] = {}
@@ -81,8 +85,11 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
     ) -> Dict:
         """
         Process a user message and generate a response.
-        First checks for FAQ matches, then falls back to LLM if no match.
-        First checks predefined Q&A, then falls back to LLM if no match.
+        Priority order:
+        1. Admin Q&A (highest priority)
+        2. FAQ matches
+        3. Predefined Q&A
+        4. LLM fallback (lowest priority)
         """
         # Initialize conversation history if needed
         if conversation_id not in self.conversations:
@@ -95,7 +102,34 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
             "timestamp": datetime.now().isoformat()
         })
         
-        # STEP 1: Check for FAQ match first
+        # STEP 1: Check for Admin Q&A match first (highest priority)
+        admin_match = self.admin_qa_service.find_matching_qa(message)
+        
+        if admin_match:
+            # Admin Q&A match found - return admin-curated answer
+            answer = admin_match["answer"]
+            
+            # Add assistant response to history
+            self.conversations[conversation_id].append({
+                "role": "assistant",
+                "content": answer,
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            return {
+                "message": answer,
+                "suggestions": self._generate_suggestions(message, answer),
+                "metadata": {
+                    "source": "admin",
+                    "matched_question": admin_match["question"],
+                    "match_type": admin_match.get("match_type", "unknown"),
+                    "language": language,
+                    "timestamp": datetime.now().isoformat()
+                },
+                "answer_source": "admin"
+            }
+        
+        # STEP 2: Check for FAQ match
         faq_match = self.faq_service.find_matching_faq(message)
         
         if faq_match:
@@ -117,10 +151,10 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                     "faq_topic": faq_match["topic"],
                     "timestamp": datetime.now().isoformat()
                 },
-                "answer_source": "faq_match"
+                "answer_source": "faq"
             }
         
-        # STEP 2: Try predefined Q&A
+        # STEP 3: Try predefined Q&A
         predefined_match = self.qa_service.find_answer(message)
         
         if predefined_match:
@@ -150,7 +184,7 @@ Always be helpful, knowledgeable, friendly, and represent K2 Communications' exc
                 "answer_source": "predefined"
             }
         
-        # STEP 3: No predefined answer found - use LLM
+        # STEP 4: No predefined answer found - use LLM
         # Check if API key is missing
         if self.api_key_missing:
             missing_key_message = (

@@ -5,7 +5,7 @@ import os
 import logging
 import time
 
-from routes import chat, services, feedback
+from routes import chat, services, feedback, admin
 
 # Configure logging
 logging.basicConfig(
@@ -85,6 +85,7 @@ async def log_requests(request: Request, call_next):
 app.include_router(chat.router, prefix="/api/chat", tags=["chat"])
 app.include_router(services.router, prefix="/api/services", tags=["services"])
 app.include_router(feedback.router, prefix="/api/feedback", tags=["feedback"])
+app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
 
 @app.get("/")
 async def root():
