@@ -9,7 +9,6 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Main route: Floating AI Assistant Widget
 app.get('/', (req, res) => {
   res.send(`
     <!DOCTYPE html>
@@ -129,5 +128,27 @@ app.get('/', (req, res) => {
           const myMsg = prompt.value;
           addMsg('You', myMsg);
           prompt.value = '';
-          addMsg('
+          addMsg('K2', '...');
+          try {
+            const res = await fetch('/ask', {
+              method: 'POST',
+              headers: {'Content-Type':'application/json'},
+              body: JSON.stringify({prompt: myMsg})
+            });
+            const data = await res.json();
+            messages.lastChild.innerText = 'K2: ' + (data.response || data.error || "No answer");
+          } catch {
+            messages.lastChild.innerText = 'K2: (Error, could not connect)';
+          }
+        };
+        function addMsg(sender, txt) {
+          const el = document.createElement('div');
+          el.innerText = sender + ": " + txt;
+          messages.appendChild(el);
+          messages.scrollTop = messages.scrollHeight;
+        }
+      </script>
+    </body>
+    </html>
+  `);
 });
