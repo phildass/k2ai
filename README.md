@@ -21,15 +21,27 @@ K2 Communications (https://www.k2communications.in/) is a leading PR agency in I
 
 ## 🚀 Features
 
-### 1. Admin-Managed Q&A System (NEW!)
+### 1. Floating AI Assistant Widget (NEW!)
+- **Attractive Floating Button**: Circular chat icon positioned at bottom-right corner
+- **Hover Tooltip**: "I am the K2 AI Assistant, how may I help you?"
+- **Popup Chat Window**: ~360px × 720px responsive chat interface
+- **Live AI Responses**: Real-time answers powered by OpenAI
+- **Modern Design**: Light bluish background, rounded corners, subtle shadows
+- **Loading Indicators**: Visual feedback while waiting for responses
+- **Error Handling**: Graceful error messages for connection issues
+- **Mobile Responsive**: Works seamlessly on desktop and mobile devices
+- **Static Homepage**: Clean, professional landing page showcasing K2 Communications
+
+### 2. Admin-Managed Q&A System
 - **Admin Panel**: Web-based interface at `/admin` to manage Q&A pairs
 - **Live Updates**: Add, edit, or delete Q&A pairs without redeployment
 - **Priority Answers**: Admin-curated answers take precedence over AI responses
 - **Answer Source Indicators**: Clear labels showing if answers are "Admin", "Curated", or "AI Generated"
 - **Secure Access**: Password-protected admin interface
 - **Persistent Storage**: Q&A pairs stored in JSON file, survive restarts
+- **Instructions Panel**: Built-in guidance for using admin features
 
-### 2. Hybrid Q&A System
+### 3. Hybrid Q&A System
 - **Predefined Q&A**: Fast, consistent answers for common questions
 - **LLM Fallback**: AI-powered responses for complex or unique queries
 - **Smart Matching**: Keyword-based fuzzy matching with confidence scores
@@ -248,16 +260,28 @@ The admin panel allows authorized users to manage Q&A pairs that take priority o
 ### Access the Admin Panel
 
 1. **Navigate to** `http://localhost:3000/admin` (or your deployed URL + `/admin`)
+   - You can also click "Admin" in the navigation menu on the homepage
 2. **Login with password**: Default is `k2admin2026` (set via `ADMIN_PASSWORD` environment variable)
 3. **Manage Q&A pairs**: Add, edit, or delete custom responses
 
-### Admin Features
+### Admin Panel Features
 
 - **Add Q&A Pairs**: Create new question-answer pairs that the AI will use
 - **Edit Existing Pairs**: Update questions or answers as needed
-- **Delete Pairs**: Remove outdated Q&A pairs
+- **Delete Pairs**: Remove outdated or incorrect Q&A pairs
 - **Live Updates**: Changes take effect immediately without restarting the server
 - **Persistent Storage**: All Q&A pairs are stored in `backend/data/admin_qa.json`
+- **Instructions Panel**: Clear guidance on how to use the admin features
+
+### How It Works
+
+The admin panel provides a user-friendly interface to:
+- Manage custom responses for frequently asked questions
+- Override AI-generated answers with curated content
+- Ensure consistent, accurate responses for important queries
+- Update content without code changes or server restarts
+
+The system uses fuzzy matching, so questions don't need to match exactly - similar questions will also trigger your custom answers.
 
 ### Answer Priority
 
@@ -277,10 +301,13 @@ The chat interface displays badges showing the source of each answer:
 ### Security Notes
 
 ⚠️ **Important for Production:**
-- Change the default `ADMIN_PASSWORD` in your `.env` file
-- Use a strong, unique password
+- **Change the default password**: Set a strong, unique password in your `.env` file
+- The default password is `k2admin2026` - DO NOT use this in production
+- Use a strong, unique password (e.g., `MySecureP@ssw0rd2026!`)
+- Set `ADMIN_PASSWORD` in your `backend/.env` file
 - Consider implementing proper authentication (OAuth, JWT) for production use
 - The current implementation is a simple token-based auth suitable for internal use
+- Admin tokens are stored in browser localStorage and persist across sessions
 
 ## 📖 API Documentation
 

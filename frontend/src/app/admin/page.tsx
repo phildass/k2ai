@@ -257,6 +257,28 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* Instructions */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8">
+          <h2 className="text-xl font-semibold text-blue-900 mb-3">How It Works</h2>
+          <div className="text-gray-700 space-y-2">
+            <p>
+              <strong>Welcome to the K2 AI Assistant Admin Panel!</strong> This panel allows you to manage 
+              custom Q&A pairs that will be prioritized over AI-generated responses.
+            </p>
+            <ul className="list-disc list-inside space-y-1 ml-4">
+              <li>Add custom question-answer pairs that users frequently ask</li>
+              <li>Edit existing pairs to update or improve answers</li>
+              <li>Delete outdated or incorrect Q&A pairs</li>
+              <li>Changes take effect immediately - no restart required</li>
+              <li>Admin answers have the highest priority and will be shown first</li>
+            </ul>
+            <p className="mt-3 text-sm text-blue-800">
+              <strong>Note:</strong> The system uses fuzzy matching, so questions don't need to match exactly. 
+              Similar questions will also trigger your custom answers.
+            </p>
+          </div>
+        </div>
+
         {/* Add New Q&A Form */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
           <h2 className="text-xl font-semibold mb-4">Add New Q&A Pair</h2>
