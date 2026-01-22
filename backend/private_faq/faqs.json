@@ -1,0 +1,18 @@
+{
+  "fees": {
+    "keywords": ["fees", "fee", "cost", "costs", "price", "prices", "pricing", "charges", "charge", "rate", "rates"],
+    "answer": "The fees are dependent on a variety of factors. To get a concise answer, connect with our offices. Call ... in Bangalore, ... in Mumbai, ... in Delhi NCR. Or write to us at enquiry@k2communications.in"
+  },
+  "ceo": {
+    "keywords": ["ceo", "chief executive", "founder", "who runs", "who is running", "leadership"],
+    "answer": "Our CEO is [CEO Name]. For more information about our leadership team, please visit our website at https://www.k2communications.in/ or contact us at enquiry@k2communications.in"
+  },
+  "contact": {
+    "keywords": ["contact", "reach", "call", "phone", "email", "get in touch", "connect"],
+    "answer": "You can reach K2 Communications through the following channels:\n- Bangalore: [Phone Number]\n- Mumbai: [Phone Number]\n- Delhi NCR: [Phone Number]\n- Email: enquiry@k2communications.in\n- Website: https://www.k2communications.in/"
+  },
+  "offices": {
+    "keywords": ["office", "offices", "location", "locations", "address", "where are you", "branch", "branches"],
+    "answer": "K2 Communications has offices in:\n- Bangalore\n- Mumbai\n- Delhi NCR\nFor specific addresses and contact details, please email us at enquiry@k2communications.in or visit our website."
+  }
+}
