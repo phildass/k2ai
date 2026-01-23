@@ -1,15 +1,9 @@
-# Dependencies
-node_modules/
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-.Python
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
+#rm -rf node_modules
+rm -f package-lock.json
+npm install
+git add package.json package-lock.json
+git commit -m "Force fresh lock and dependencies for Render deploy"
+git push origin main
 
 # Build outputs
 dist/
