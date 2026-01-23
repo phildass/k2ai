@@ -1,3 +1,4 @@
+console.log("Starting index.js..."); // <--- ADD THIS AS FIRST LINE!
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
