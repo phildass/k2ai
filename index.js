@@ -146,9 +146,11 @@ app.get('/', (req, res) => {
           el.innerText = sender + ": " + txt;
           messages.appendChild(el);
           messages.scrollTop = messages.scrollHeight;
-        }
+         }
       </script>
     </body>
     </html>
-  `);
-});
+  `);  // <--- Closing the template string and res.send
+});     // <--- Closing the app.get('/', ... )
+
+// [PASTE THE ADDITIONAL ENDPOINTS AND APP.LISTEN CODE HERE]
