@@ -1,27 +1,37 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
-const axios = require('axios');
+const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.json());
+app.use(express.json());
+
+// Serve static files from public directory
 app.use(express.static('public'));
 
-// Replace this function with OpenAI or other AI API integration
-async function getAIResponse(message) {
-  // Simple canned response for demo. Replace with OpenAI if you have API key.
-  if (message.toLowerCase().includes('services')) {
-    return "We offer PR consultancy, crisis management, digital marketing, and content development. How can I help?";
-  }
-  return "I'm the K2 Communications AI assistant. Ask me about our PR services!";
-}
+// Proxy API requests to Python FastAPI backend
+// Change this URL to your Python backend URL when deployed
+const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
 
-app.post('/api/chat', async (req, res) => {
-  const userMessage = req.body.message;
-  const aiReply = await getAIResponse(userMessage);
-  res.json({ reply: aiReply });
-});
+app.use('/api', createProxyMiddleware({
+  target: PYTHON_BACKEND_URL,
+  changeOrigin: true,
+  onProxyReq: (proxyReq, req, res) => {
+    console.log(`[Proxy] ${req.method} ${req.path} -> ${PYTHON_BACKEND_URL}${req.path}`);
+  },
+  onError: (err, req, res) => {
+    console.error('[Proxy Error]:', err.message);
+    res.status(500).json({ 
+      error: 'Backend connection error',
+      message: 'Unable to connect to AI backend. Please ensure the Python server is running.'
+    });
+  }
+}));
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`✓ Frontend server running on port ${PORT}`);
+  console.log(`✓ Proxying API requests to: ${PYTHON_BACKEND_URL}`);
+  console.log(`✓ Visit: http://localhost:${PORT}`);
+  console.log(`✓ Admin Panel: http://localhost:${PORT}/admin.html`);
+});
