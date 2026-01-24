@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K2 AI Admin Panel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f7fa;
+      color: #333;
+    }
+    
+    /* Login Screen */
+    .login-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .login-box {
+      background: white;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+    }
+    .login-box h1 {
+      color: #213076;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: #213076;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .login-box button:hover {
+      background: #1a2560;
+    }
+    .error-message {
+      color: #d32f2f;
+      font-size: 14px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    
+    /* Admin Dashboard */
+    .admin-container {
+      display: none;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .admin-header {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .admin-header h1 {
+      color: #213076;
+    }
+    .logout-btn {
+      padding: 10px 20px;
+      background: #d32f2f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    
+    /* FAQ Section */
+    .faq-section {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .faq-section h2 {
+      color: #213076;
+      margin-bottom: 20px;
+    }
+    
+    /* Add/Edit Form */
+    .faq-form {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+    .faq-form input,
+    .faq-form textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+    }
+    .faq-form textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+    .faq-form button {
+      padding: 10px 20px;
+      background: #213076;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .faq-form button:hover {
+      background: #1a2560;
+    }
+    .cancel-btn {
+      background: #666 !important;
+    }
+    
+    /* FAQ List */
+    .faq-list {
+      margin-top: 20px;
+    }
+    .faq-item {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border-left: 4px solid #213076;
+    }
+    .faq-item h3 {
+      color: #213076;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .faq-item p {
+      color: #666;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+    .faq-item .actions {
+      display: flex;
+      gap: 10px;
+    }
+    .faq-item button {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .edit-btn {
+      background: #4caf50;
+      color: white;
+    }
+    .delete-btn {
+      background: #d32f2f;
+      color: white;
+    }
+    
+    .hidden {
+      display: none;
+    }
+    
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <!-- Login Screen -->
+  <div class="login-container" id="loginScreen">
+    <div class="login-box">
+      <h1>K2 AI Admin Panel</h1>
+      <div class="error-message" id="loginError"></div>
+      <input type="password" id="passwordInput" placeholder="Enter admin password" />
+      <button onclick="login()">Login</button>
+    </div>
+  </div>
+
+  <!-- Admin Dashboard -->
+  <div class="admin-container" id="adminDashboard">
+    <div class="admin-header">
+      <h1>K2 AI - FAQ Management</h1>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+
+    <div class="faq-section">
+      <h2>Manage FAQs</h2>
+      
+      <!-- Add/Edit Form -->
+      <div class="faq-form" id="faqForm">
+        <h3 id="formTitle">Add New FAQ</h3>
+        <input type="hidden" id="editingId" />
+        <input type="text" id="questionInput" placeholder="Question" />
+        <textarea id="answerInput" placeholder="Answer"></textarea>
+        <button onclick="saveFAQ()">Save FAQ</button>
+        <button class="cancel-btn hidden" id="cancelBtn" onclick="cancelEdit()">Cancel</button>
+      </div>
+
+      <!-- FAQ List -->
+      <div class="faq-list" id="faqList">
+        <div class="loading">Loading FAQs...</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let authToken = localStorage.getItem('k2_admin_token');
+
+    // Check if already logged in
+    if (authToken) {
+      showDashboard();
+      loadFAQs();
+    }
+
+    async function login() {
+      const password = document.getElementById('passwordInput').value;
+      const errorDiv = document.getElementById('loginError');
+      
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+          authToken = data.token;
+          localStorage.setItem('k2_admin_token', authToken);
+          showDashboard();
+          loadFAQs();
+        } else {
+          errorDiv.textContent = data.message || 'Invalid password';
+        }
+      } catch (error) {
+        errorDiv.textContent = 'Connection error. Please try again.';
+        console.error('Login error:', error);
+      }
+    }
+
+    function showDashboard() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('adminDashboard').style.display = 'block';
+    }
+
+    function logout() {
+      localStorage.removeItem('k2_admin_token');
+      authToken = null;
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('adminDashboard').style.display = 'none';
+      document.getElementById('passwordInput').value = '';
+    }
+
+    async function loadFAQs() {
+      const listDiv = document.getElementById('faqList');
+      listDiv.innerHTML = '<div class="loading">Loading FAQs...</div>';
+      
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/qa`, {
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        
+        if (response.status === 401) {
+          logout();
+          return;
+        }
+        
+        const faqs = await response.json();
+        
+        if (faqs.length === 0) {
+          listDiv.innerHTML = '<p style="text-align:center; color:#666;">No FAQs yet. Add your first one above!</p>';
+          return;
+        }
+        
+        listDiv.innerHTML = faqs.map(faq => `
+          <div class="faq-item">
+            <h3>${escapeHtml(faq.question)}</h3>
+            <p>${escapeHtml(faq.answer).replace(/\n/g, '<br>')}</p>
+            <div class="actions">
+              <button class="edit-btn" onclick="editFAQ(${faq.id}, '${escapeHtml(faq.question)}', '${escapeHtml(faq.answer)}')">Edit</button>
+              <button class="delete-btn" onclick="deleteFAQ(${faq.id})">Delete</button>
+            </div>
+          </div>
+        `).join('');
+      } catch (error) {
+        listDiv.innerHTML = '<p style="text-align:center; color:#d32f2f;">Error loading FAQs</p>';
+        console.error('Load FAQs error:', error);
+      }
+    }
+
+    async function saveFAQ() {
+      const question = document.getElementById('questionInput').value.trim();
+      const answer = document.getElementById('answerInput').value.trim();
+      const editingId = document.getElementById('editingId').value;
+      
+      if (!question || !answer) {
+        alert('Please fill in both question and answer');
+        return;
+      }
+      
+      try {
+        const url = editingId 
+          ? `${API_BASE}/api/admin/qa/${editingId}`
+          : `${API_BASE}/api/admin/qa`;
+        
+        const method = editingId ? 'PUT' : 'POST';
+        
+        const response = await fetch(url, {
+          method,
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({ question, answer })
+        });
+        
+        if (response.ok) {
+          cancelEdit();
+          loadFAQs();
+        } else {
+          alert('Error saving FAQ');
+        }
+      } catch (error) {
+        alert('Error saving FAQ');
+        console.error('Save FAQ error:', error);
+      }
+    }
+
+    function editFAQ(id, question, answer) {
+      document.getElementById('formTitle').textContent = 'Edit FAQ';
+      document.getElementById('editingId').value = id;
+      document.getElementById('questionInput').value = unescapeHtml(question);
+      document.getElementById('answerInput').value = unescapeHtml(answer);
+      document.getElementById('cancelBtn').classList.remove('hidden');
+      document.getElementById('faqForm').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function cancelEdit() {
+      document.getElementById('formTitle').textContent = 'Add New FAQ';
+      document.getElementById('editingId').value = '';
+      document.getElementById('questionInput').value = '';
+      document.getElementById('answerInput').value = '';
+      document.getElementById('cancelBtn').classList.add('hidden');
+    }
+
+    async function deleteFAQ(id) {
+      if (!confirm('Are you sure you want to delete this FAQ?')) return;
+      
+      try {
+        const response = await fetch(`${API_BASE}/api/admin/qa/${id}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${authToken}` }
+        });
+        
+        if (response.ok) {
+          loadFAQs();
+        } else {
+          alert('Error deleting FAQ');
+        }
+      } catch (error) {
+        alert('Error deleting FAQ');
+        console.error('Delete FAQ error:', error);
+      }
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function unescapeHtml(html) {
+      const div = document.createElement('div');
+      div.innerHTML = html;
+      return div.textContent;
+    }
+
+    // Allow Enter key to submit login
+    document.getElementById('passwordInput')?.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') login();
+    });
+  </script>
+</body>
+</html>
