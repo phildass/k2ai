@@ -216,67 +216,8 @@
     </div>
   </div>
 
-  <script>
-    const widget = document.getElementById('k2Widget');
-    const chatWindow = document.getElementById('chatWindow');
-    const closeBtn = document.getElementById('closeBtn');
-    const sendBtn = document.getElementById('sendBtn');
-    const userInput = document.getElementById('userInput');
-    const chatMessages = document.getElementById('chatMessages');
-
-    // Toggle chat window
-    widget.addEventListener('click', () => {
-      chatWindow.classList.toggle('active');
-      if (chatWindow.classList.contains('active')) {
-        userInput.focus();
-      }
-    });
-
-    // Close chat window
-    closeBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      chatWindow.classList.remove('active');
-    });
-
-    // Send message
-    function sendMessage() {
-      const message = userInput.value.trim();
-      if (!message) return;
-
-      // Add user message
-      const userMsg = document.createElement('div');
-      userMsg.className = 'message user-msg';
-      userMsg.textContent = 'You: ' + message;
-      chatMessages.appendChild(userMsg);
-
-      // Clear input
-      userInput.value = '';
-
-      // Simulate assistant response (replace with actual API call)
-      setTimeout(() => {
-        const assistantMsg = document.createElement('div');
-        assistantMsg.className = 'message assistant-msg';
-        assistantMsg.textContent = 'K2 Assistant: Thank you for your message. How else can I help?';
-        chatMessages.appendChild(assistantMsg);
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-      }, 500);
-
-      chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
-
-    sendBtn.addEventListener('click', sendMessage);
-    userInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        sendMessage();
-      }
-    });
-
-    // Close chat when clicking outside
-    document.addEventListener('click', (e) => {
-      if (!chatWindow.contains(e.target) && !widget.contains(e.target)) {
-        chatWindow.classList.remove('active');
-      }
-    });
-  </script>
+  <script src="chat-integration.js"></script>
+</body>
+</html>
 </body>
 </html>
