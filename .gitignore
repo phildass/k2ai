@@ -44,3 +44,4 @@ coverage/
 .cache/
 .parcel-cache/
 node_modules/
+k2ai/
