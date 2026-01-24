@@ -1,9 +1,5 @@
-#rm -rf node_modules
-rm -f package-lock.json
-npm install
-git add package.json package-lock.json
-git commit -m "Force fresh lock and dependencies for Render deploy"
-git push origin main
+# Node modules
+node_modules/
 
 # Build outputs
 dist/

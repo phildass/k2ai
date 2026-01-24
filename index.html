@@ -2,178 +2,186 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>K2 Communications Sample</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>K2 AI Assistant Admin Panel</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: #f7fafc;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      min-height: 480px;
-    }
-    .center-image {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      margin-top: 4vh;
-    }
-    .center-image img {
-      max-width: 90vw;
-      max-height: 70vh;
-      border-radius: 14px;
-      box-shadow: 0 4px 32px #0002;
-      border: 2px solid #e0e9ff;
-      background: #fff;
-    }
-    .k2-btn {
-      position: fixed;
-      right: 2vw;
-      bottom: 2vw;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      background: #fff;
-      border: 2px solid #73c7fa;
-      box-shadow: 0 4px 16px #0002;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 10000;
-      transition: box-shadow 0.2s;
-    }
-    .k2-btn img {
-      width: 32px;
-      height: 32px;
-      object-fit: contain;
-      border-radius: 50%;
-    }
-    .k2-btn:hover::after {
-      content: 'I am the K2 AI Assistant, how may I help you?';
-      position: absolute;
-      right: 120%;
-      bottom: 16px;
-      background: #fff;
+      background: #f5f7fa;
       color: #222;
-      padding: 6px 16px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px #0003;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 2em 2em 2em 2em;
+      max-width: 570px;
+      margin: 55px auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(60,80,140,0.07);
+      text-align: center;
+      position: relative;
+    }
+    .widget {
+      margin-bottom: 28px;
+      display: inline-block;
+      cursor: pointer;
+      position: relative;
+    }
+    .widget img {
+      display: block;
+      margin: 0 auto;
+      max-width: none;
+      height: auto;
+    }
+    .tooltip {
+      visibility: hidden;
+      background-color: #213076;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 8px 18px;
+      position: absolute;
+      z-index: 1;
+      top: 105%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.08em;
       white-space: nowrap;
-      font-size: 0.9rem;
+      opacity: 0.96;
+      box-shadow: 0 2px 8px rgba(60,80,140,0.23);
       pointer-events: none;
     }
-    #k2-chatbox {
+    .widget:hover .tooltip {
+      visibility: visible;
+    }
+    .chat-window {
       display: none;
-      position: fixed;
-      right: 2vw;
-      bottom: 66px;
-      width: 320px;
-      height: 400px;
-      background: #e3f3ff;
-      border-radius: 18px;
-      box-shadow: 0 8px 32px #0002;
-      padding: 12px;
-      z-index: 10000;
-      flex-direction: column;
-    }
-    #k2-chatbox.active {
-      display: flex;
-    }
-    #k2-messages {
-      flex: 1;
-      overflow-y: auto;
+      position: relative;
+      width: 12cm;
+      height: 6cm;
+      max-width: 100%;
+      background: #fdfdfd;
+      border: 2px solid #213076;
       border-radius: 10px;
-      background: #fff;
-      margin-bottom: 10px;
-      padding: 8px;
-      font-size: 0.95rem;
+      margin: 0 auto 20px auto;
+      margin-top: 6px;
+      padding: 16px;
+      box-sizing: border-box;
+      box-shadow: 0 2px 12px rgba(21,37,61,0.13);
+      text-align: left;
+      overflow: auto;
     }
-    #k2-chat-input {
-      display: flex;
-    }
-    #k2-chat-input input {
-      flex: 1;
-      border: 1px solid #c5e6fa;
-      border-radius: 6px;
-      padding: 6px;
-      margin-right: 6px;
-      font-size: 0.95rem;
-    }
-    #k2-chat-input button {
-      background: #73c7fa;
-      border: none;
-      color: #fff;
+    .chat-header {
       font-weight: bold;
-      border-radius: 6px;
-      padding: 6px 12px;
+      font-size: 1em;
+      color: #213076;
+      margin-bottom: 8px;
+    }
+    .chat-body {
+      font-size: 1em;
+      margin-bottom: 12px;
+    }
+    .chat-input-area {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+    }
+    .chat-input-area input {
+      width: calc(100% - 64px);
+      padding: 6px;
+      border-radius: 4px;
+      border: 1px solid #aaa;
+      font-size: 0.96em;
+      margin-right: 6px;
+      box-sizing: border-box;
+    }
+    .chat-input-area button {
+      padding: 5px 16px;
+      font-size: 0.96em;
+      border-radius: 4px;
+      background: #213076;
+      color: #fff;
+      border: none;
       cursor: pointer;
-      font-size: 0.95rem;
+    }
+    .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      font-size: 20px;
+      color: #aaa;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    h1 {
+      color: #213076;
+      font-size: 2em;
+      margin-bottom: 10px;
+      margin-top: 0;
+    }
+    p {
+      color: #444;
+      margin-bottom: 20px;
+    }
+    .info {
+      font-size: 0.96em;
+      color: #888;
     }
   </style>
 </head>
 <body>
-  <!-- Main Sample Image -->
-  <div class="center-image">
-    <img src="/index.png" alt="K2 Communications Sample Screenshot">
-    <p style="margin-top:16px;font-size:1.2rem;color:#333;">K2 Communications – Sample Homepage</p>
-  </div>
-
-  <!-- Compact AI Assistant Widget -->
-  <div class="k2-btn" id="k2-asst-btn" title="K2 AI Assistant">
-    <img src="/k2logo.png" alt="K2 Assistant">
-  </div>
-  <div id="k2-chatbox">
-    <div style="font-weight:bold; margin-bottom: 6px; font-size:1.08rem;">K2 AI Assistant</div>
-    <div id="k2-messages"></div>
-    <form id="k2-chat-input" autocomplete="off">
-      <input type="text" id="k2-prompt" placeholder="Ask a question..." autofocus>
-      <button type="submit">Send</button>
-    </form>
+  <div class="container">
+    <!-- AI Assistant Widget (Logo as Button) -->
+    <div class="widget" id="aiWidget">
+      <img src="k2logo.png" alt="K2 AI Assistant Widget" id="aiWidgetLogo" />
+      <div class="tooltip">I am the K2 AI Assistant, How may I help you?</div>
+    </div>
+    <!-- Chat Window (Hidden by Default) -->
+    <div class="chat-window" id="chatWindow">
+      <button class="close-btn" onclick="closeChat()" title="Close">&times;</button>
+      <div class="chat-header">K2 AI Assistant</div>
+      <div class="chat-body" id="chatBody">
+        Hello! How can I help you today?
+      </div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInput" placeholder="Type your question..." autocomplete="off" />
+        <button onclick="sendChat()">Send</button>
+      </div>
+    </div>
+    <h1>K2 AI Assistant Admin Panel</h1>
+    <p>
+      This page is under construction.<br>
+      Admin tools for managing custom Q/A will appear here.
+    </p>
+    <div class="info">
+      &copy; 2026 K2 AI
+    </div>
   </div>
   <script>
-    // Widget button events
-    const k2Btn = document.getElementById('k2-asst-btn');
-    const k2Box = document.getElementById('k2-chatbox');
-    k2Btn.onclick = () => k2Box.classList.toggle('active');
-    document.addEventListener('click', (e) => {
-      if (!k2Box.contains(e.target) && !k2Btn.contains(e.target)) {
-        k2Box.classList.remove('active');
+    const widget = document.getElementById('aiWidget');
+    const chatWindow = document.getElementById('chatWindow');
+    function closeChat() {
+      chatWindow.style.display = "none";
+    }
+    widget.onclick = function() {
+      chatWindow.style.display = "block";
+    };
+    function sendChat() {
+      const input = document.getElementById('chatInput');
+      const chatBody = document.getElementById('chatBody');
+      if (input.value.trim()) {
+        chatBody.innerHTML += `<br><strong>You:</strong> ${input.value.trim()}`;
+        input.value = '';
+      }
+    }
+    // Optional: Keyboard "Enter" support
+    document.getElementById('chatInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        sendChat();
       }
     });
-    // Chat logic
-    const form = document.getElementById('k2-chat-input');
-    const prompt = document.getElementById('k2-prompt');
-    const messages = document.getElementById('k2-messages');
-    form.onsubmit = async (e) => {
-      e.preventDefault();
-      if (!prompt.value.trim()) return;
-      const myMsg = prompt.value;
-      addMsg('You', myMsg);
-      prompt.value = '';
-      addMsg('K2', '...');
-      try {
-        const res = await fetch('/ask', {
-          method: 'POST',
-          headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({prompt: myMsg})
-        });
-        const data = await res.json();
-        messages.lastChild.innerText = 'K2: ' + (data.response || data.error || "No answer");
-      } catch {
-        messages.lastChild.innerText = 'K2: (Error, could not connect)';
-      }
-    };
-    function addMsg(sender, txt) {
-      const el = document.createElement('div');
-      el.innerText = sender + ": " + txt;
-      messages.appendChild(el);
-      messages.scrollTop = messages.scrollHeight;
-    }
   </script>
 </body>
 </html>
