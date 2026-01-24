@@ -135,7 +135,7 @@
   <div class="container">
     <!-- AI Assistant Widget (Logo as Button) -->
     <div class="widget" id="aiWidget">
-      <img src="k2logo.png" alt="K2 AI Assistant Widget" id="aiWidgetLogo" />
+      <img src="/k2logo.png" alt="K2 AI Assistant Widget" id="aiWidgetLogo" />
       <div class="tooltip">I am the K2 AI Assistant, How may I help you?</div>
     </div>
     <!-- Chat Window (Hidden by Default) -->
@@ -172,7 +172,14 @@
       const input = document.getElementById('chatInput');
       const chatBody = document.getElementById('chatBody');
       if (input.value.trim()) {
-        chatBody.innerHTML += `<br><strong>You:</strong> ${input.value.trim()}`;
+        const messageText = input.value.trim();
+        const br = document.createElement('br');
+        const strong = document.createElement('strong');
+        strong.textContent = 'You:';
+        const textNode = document.createTextNode(' ' + messageText);
+        chatBody.appendChild(br);
+        chatBody.appendChild(strong);
+        chatBody.appendChild(textNode);
         input.value = '';
       }
     }
