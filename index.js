@@ -7,15 +7,14 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
 
-// Proxy /api/chat to Python backend /api/chat
+// Proxy /api/chat to FastAPI /api/chat/
 app.use('/api/chat', createProxyMiddleware({
     target: PYTHON_BACKEND_URL,
     changeOrigin: true,
-    pathRewrite: { '^/api/chat': '/api/chat' }, // <--- Correct proxy path!
     logLevel: 'debug'
 }));
 
-// Proxy /api/health to Python backend /health
+// Proxy /api/health to FastAPI /health
 app.use('/api/health', createProxyMiddleware({
     target: PYTHON_BACKEND_URL,
     changeOrigin: true,

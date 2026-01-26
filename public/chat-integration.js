@@ -5,10 +5,9 @@ const sendBtn = document.getElementById('sendBtn');
 const userInput = document.getElementById('userInput');
 const chatMessages = document.getElementById('chatMessages');
 
-const API_BASE = window.location.origin;
+const API_URL = 'http://localhost:8000/chat';  // Direct to Python
 let conversationId = null;
 
-// Toggle chat window
 widget.addEventListener('click', () => {
   chatWindow.classList.toggle('active');
   if (chatWindow.classList.contains('active')) {
@@ -16,31 +15,24 @@ widget.addEventListener('click', () => {
   }
 });
 
-// Close chat window
 closeBtn.addEventListener('click', (e) => {
   e.stopPropagation();
   chatWindow.classList.remove('active');
 });
 
-// Send message to backend
 async function sendMessage() {
   const message = userInput.value.trim();
   if (!message) return;
 
-  // Disable input while processing
   sendBtn.disabled = true;
   userInput.disabled = true;
 
-  // Add user message
   const userMsg = document.createElement('div');
   userMsg.className = 'message user-msg';
   userMsg.textContent = message;
   chatMessages.appendChild(userMsg);
-
-  // Clear input
   userInput.value = '';
 
-  // Show typing indicator
   const typingIndicator = document.createElement('div');
   typingIndicator.className = 'message typing-indicator';
   typingIndicator.textContent = 'K2 Assistant is typing...';
@@ -48,12 +40,9 @@ async function sendMessage() {
   chatMessages.scrollTop = chatMessages.scrollHeight;
 
   try {
-    // Call backend API
-    const response = await fetch(`${API_BASE}/api/chat`, {
+    const response = await fetch(API_URL, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         message: message,
         conversation_id: conversationId,
@@ -61,54 +50,46 @@ async function sendMessage() {
       })
     });
 
-    const data = await response.json();
-    
-    // Store conversation ID
-    if (data.conversation_id) {
-      conversationId = data.conversation_id;
-    }
-
-    // Remove typing indicator
     typingIndicator.remove();
 
-    // Add assistant response
+    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+    const data = await response.json();
+    if (data.conversation_id) conversationId = data.conversation_id;
+
     const assistantMsg = document.createElement('div');
     assistantMsg.className = 'message assistant-msg';
-    assistantMsg.innerHTML = data.message.replace(/\n/g, '<br>');
+    assistantMsg.textContent = data.message || 'Sorry, I encountered an error.';
     chatMessages.appendChild(assistantMsg);
 
+    if (data.suggestions && data.suggestions.length > 0) {
+      const suggestionsDiv = document.createElement('div');
+      suggestionsDiv.className = 'suggestions';
+      data.suggestions.forEach(suggestion => {
+        const btn = document.createElement('button');
+        btn.className = 'suggestion-btn';
+        btn.textContent = suggestion;
+        btn.onclick = () => { userInput.value = suggestion; sendMessage(); };
+        suggestionsDiv.appendChild(btn);
+      });
+      chatMessages.appendChild(suggestionsDiv);
+    }
   } catch (error) {
-    console.error('Error sending message:', error);
-    
-    // Remove typing indicator
-    typingIndicator.remove();
-
-    // Show error message
+    console.error('Error:', error);
+    if (typingIndicator.parentNode) typingIndicator.remove();
     const errorMsg = document.createElement('div');
     errorMsg.className = 'message assistant-msg';
     errorMsg.textContent = 'Sorry, I encountered an error. Please try again.';
     chatMessages.appendChild(errorMsg);
+  } finally {
+    sendBtn.disabled = false;
+    userInput.disabled = false;
+    userInput.focus();
+    chatMessages.scrollTop = chatMessages.scrollHeight;
   }
-
-  // Re-enable input
-  sendBtn.disabled = false;
-  userInput.disabled = false;
-  userInput.focus();
-  
-  // Scroll to bottom
-  chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 sendBtn.addEventListener('click', sendMessage);
 userInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter' && !sendBtn.disabled) {
-    sendMessage();
-  }
-});
-
-// Close chat when clicking outside
-document.addEventListener('click', (e) => {
-  if (!chatWindow.contains(e.target) && !widget.contains(e.target)) {
-    chatWindow.classList.remove('active');
-  }
+  if (e.key === 'Enter') sendMessage();
 });
