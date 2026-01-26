@@ -41,3 +41,8 @@ coverage/
 .parcel-cache/
 node_modules/
 k2ai/
+
+venv/
+__pycache__/
+*.backup
+*.old
