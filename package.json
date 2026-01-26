@@ -4,7 +4,7 @@
   "description": "K2 Communications AI Chatbot",
   "main": "server.js",
   "scripts": {
-    "start": "./start.sh",
+    "start": "node index.js",
     "dev": "node server.js",
     "backend": "cd backend && uvicorn main:app --reload",
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,10 +12,10 @@
   "dependencies": {
     "axios": "^1.7.9",
     "body-parser": "^1.20.3",
-    "cors": "^2.8.5",
+    "cors": "^2.8.6",
     "dotenv": "^17.2.3",
-    "express": "^4.21.2",
-    "http-proxy-middleware": "^3.0.3",
+    "express": "^4.22.1",
+    "http-proxy-middleware": "^3.0.5",
     "openai": "^6.16.0"
   },
   "engines": {
