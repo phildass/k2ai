@@ -7,6 +7,13 @@ const app = express();
 const PORT = process.env.PORT || 10000;
 const PYTHON_BACKEND_URL = process.env.PYTHON_BACKEND_URL || 'http://localhost:8000';
 
+// Proxy /api/admin to FastAPI backend
+app.use('/api/admin', createProxyMiddleware({
+    target: PYTHON_BACKEND_URL,
+    changeOrigin: true,
+    logLevel: 'debug'
+}));
+
 // Proxy /api/chat to FastAPI backend
 app.use('/api/chat', createProxyMiddleware({
     target: PYTHON_BACKEND_URL,
@@ -22,22 +29,15 @@ app.use('/api/health', createProxyMiddleware({
     logLevel: 'debug'
 }));
 
-// Proxy /api/admin to FastAPI backend  <<<<<< THIS IS THE NEW BLOCK
-app.use('/api/admin', createProxyMiddleware({
-    target: PYTHON_BACKEND_URL,
-    changeOrigin: true,
-    logLevel: 'debug'
-}));
-
-// Serve static frontend files
+// Serve static files
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Special case: serve admin.html at /admin (optional, not needed if you use /admin.html)
+// Special route to serve admin.html at /admin
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
 
-// Catch-all for frontend Single Page App (optional)
+// Optional catch-all for frontend SPA
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
